@@ -1,0 +1,46 @@
+lib/
+├── models/                          # Chứa các model dữ liệu của ứng dụng.
+│   ├── recipe.dart                  # Model cho Recipe (Công thức nấu ăn).
+│   ├── user.dart                    # Model cho User (Người dùng).
+│   └── category.dart                # Model cho Category (Danh mục công thức).
+│
+├── viewmodels/                      # Chứa các ViewModel xử lý logic giao diện.
+│   ├── launch_viewmodel.dart        # ViewModel cho màn hình Launch.
+│   ├── onboarding_viewmodel.dart    # ViewModel cho màn hình Onboarding.
+│   ├── home_viewmodel.dart          # ViewModel cho màn hình Home.
+│   ├── categories_viewmodel.dart    # ViewModel cho màn hình Categories.
+│   ├── trending_viewmodel.dart      # ViewModel cho Trending Recipes.
+│   ├── profile_viewmodel.dart       # ViewModel cho Profile.
+│   ├── recipe_details_viewmodel.dart # ViewModel cho Recipe Details.
+│   └── search_viewmodel.dart        # ViewModel cho tính năng Search.
+│
+├── views/                           # Chứa các màn hình giao diện chính (UI).
+│   ├── launch_page.dart             # Màn hình Launch.
+│   ├── onboarding_page.dart         # Màn hình Onboarding.
+│   ├── login_signup_page.dart       # Màn hình Login/Sign Up.
+│   ├── home_page.dart               # Màn hình Home.
+│   ├── categories_page.dart         # Màn hình Categories.
+│   ├── trending_page.dart           # Màn hình Trending Recipes.
+│   ├── recipe_details_page.dart     # Màn hình Recipe Details.
+│   ├── profile_page.dart            # Màn hình Profile.
+│   ├── search_page.dart             # Màn hình Search.
+│   ├── settings_page.dart           # Màn hình Settings.
+│   └── widgets/                     # Các widget tái sử dụng.
+│       ├── recipe_card.dart         # Widget hiển thị công thức nấu ăn.
+│       ├── category_card.dart       # Widget hiển thị danh mục.
+│       ├── top_chef_card.dart       # Widget hiển thị Top Chef.
+│       ├── floating_menu.dart       # Widget Floating Menu.
+│       ├── bottom_nav_bar.dart      # Widget Bottom Navigation Bar.
+│       └── custom_button.dart       # Widget cho nút tái sử dụng.
+│
+├── services/                        # Chứa các service gọi API hoặc xử lý dữ liệu.
+│   ├── recipe_service.dart          # Service xử lý dữ liệu Recipe.
+│   ├── user_service.dart            # Service xử lý dữ liệu User.
+│   └── category_service.dart        # Service xử lý dữ liệu Categories.
+│
+├── utils/                           # Các tiện ích và hàm hỗ trợ.
+│   ├── validators.dart              # Hàm kiểm tra đầu vào.
+│   └── formatters.dart              # Hàm format dữ liệu.
+│
+├── main.dart                        # Điểm khởi đầu của ứng dụng.
+└── app.dart                         # Cấu hình root widget, theme, navigation.
