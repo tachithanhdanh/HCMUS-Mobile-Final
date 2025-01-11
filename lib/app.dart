@@ -7,14 +7,16 @@ import 'views/categories_page.dart';
 import 'views/profile_page.dart';
 import 'views/search_page.dart';
 import 'views/settings_page.dart';
-import 'viewmodels/launch_viewmodel.dart';
-import 'viewmodels/onboarding_viewmodel.dart';
-import 'viewmodels/login_signup_viewmodel.dart';
-import 'viewmodels/home_viewmodel.dart';
-import 'viewmodels/categories_viewmodel.dart';
-import 'viewmodels/profile_viewmodel.dart';
-import 'viewmodels/search_viewmodel.dart';
-import 'viewmodels/settings_viewmodel.dart';
+import 'views/community_page.dart';
+import 'views/trending_page.dart';
+import 'views/recipe_page.dart';
+import 'views/review1_page.dart';
+import 'views/review2_page.dart';
+import 'views/add_recipe1_page.dart';
+import 'views/add_recipe2_page.dart';
+import 'views/edit_recipe_page.dart';
+import 'views/profile_your_recipe_page.dart';
+import 'views/profile_favorites_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -36,7 +38,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         '/search': (context) => SearchPage(),
         '/settings': (context) => SettingsPage(),
-        // Thêm các route khác nếu cần
+        '/community': (context) => CommunityPage(),
+        '/trending': (context) => TrendingPage(),
       },
     );
   }

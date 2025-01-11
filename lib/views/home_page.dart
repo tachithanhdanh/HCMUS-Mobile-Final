@@ -67,20 +67,4 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavBar(),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: Center(
-  //       child: Text(
-  //         'This is Home page', // Nội dung hiển thị
-  //         style: TextStyle(
-  //           fontSize: 24, // Kích thước chữ
-  //           fontWeight: FontWeight.bold, // Chữ đậm
-  //           color: Colors.black, // Màu chữ
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
