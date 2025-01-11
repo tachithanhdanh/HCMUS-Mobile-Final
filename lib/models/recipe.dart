@@ -8,6 +8,8 @@ class Recipe {
   final String imageUrl;
   final String authorId;
   final int likes;
+  final String description;
+  final String time;
 
   Recipe({
     required this.id,
@@ -17,6 +19,8 @@ class Recipe {
     required this.category,
     required this.imageUrl,
     required this.authorId,
+    required this.description,
+    required this.time,
     this.likes = 0,
   });
 }
