@@ -8,13 +8,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Mock data for the current user
-    final User currentUser = User(
+    final UserProfile currentUser = UserProfile(
       id: '3',
-      username: 'Dianne',
+      name: 'Dianne',
       email: 'dianne@example.com',
-      profilePictureUrl: '', // Có thể thêm ảnh profile nếu cần
-      savedRecipes: [],
-      createdRecipes: [],
+      avatarUrl: '', // Có thể thêm ảnh profile nếu cần
+      favoriteRecipes: [],
     );
 
     // Mock data for Recipes
@@ -22,14 +21,14 @@ class HomePage extends StatelessWidget {
       Recipe(
         id: '1',
         title: 'Pasta Carbonara',
+        description: 'A simple pasta dish',
         ingredients: ['Pasta', 'Eggs', 'Cheese', 'Bacon'],
-        instructions: ['Boil pasta', 'Cook bacon', 'Mix ingredients'],
-        category: 'Italian',
+        steps: ['Boil pasta', 'Cook bacon', 'Mix ingredients'],
         imageUrl: '',
         authorId: '1',
-        likes: 100,
-        description: 'A simple pasta dish',
-        time: '30 mins',
+        reviews: [],
+        createdAt: DateTime.now(),
+        category: Category.MainCourse,
       )
     ];
 
@@ -51,7 +50,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       // Text: Hi, user name
                       Text(
-                        "Hi! ${currentUser.username}",
+                        "Hi! ${currentUser.name}",
                         style: TextStyle(
                           color: Colors.redAccent,
                           fontSize: 24,

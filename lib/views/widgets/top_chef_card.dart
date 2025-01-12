@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/user.dart';
+import '../../models/user.dart'; // Sử dụng UserProfile
 
 class TopChefCard extends StatelessWidget {
-  final User chef;
+  final UserProfile chef; // Thay đổi kiểu thành UserProfile
 
   TopChefCard({required this.chef});
 
@@ -11,16 +11,12 @@ class TopChefCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: chef.profilePictureUrl.isNotEmpty
-              ? NetworkImage(chef.profilePictureUrl)
-              : AssetImage('assets/images/pochita.jpg') as ImageProvider,
-          // Xử lý lỗi khi tải ảnh
-          child: chef.profilePictureUrl.isEmpty
-              ? Image.asset('assets/images/pochita.jpg', fit: BoxFit.cover)
-              : null,
+          backgroundImage: chef.avatarUrl.isNotEmpty
+              ? NetworkImage(chef.avatarUrl)
+              : AssetImage('assets/images/default_avatar.png') as ImageProvider,
         ),
-        title: Text(chef.username),
-        subtitle: Text('${chef.createdRecipes.length} Recipes'),
+        title: Text(chef.name),
+        subtitle: Text('${chef.favoriteRecipes.length} Favorite Recipes'),
       ),
     );
   }

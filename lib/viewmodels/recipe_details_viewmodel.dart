@@ -1,4 +1,4 @@
-// viewmodels/recipe_details_viewmodel.dart
+import 'package:recipe_app/enums/category.dart';
 import 'package:recipe_app/models/recipe.dart';
 
 class RecipeDetailsViewModel {
@@ -10,11 +10,14 @@ class RecipeDetailsViewModel {
       time: '30 mins',
       id: recipeId,
       title: 'Sample Recipe',
+      description: 'This is a sample recipe.',
       ingredients: ['Ingredient 1', 'Ingredient 2'],
-      instructions: ['Step 1', 'Step 2'],
-      category: 'Vegan',
-      imageUrl: '',
+      steps: ['Step 1', 'Step 2'],
+      imageUrl: 'https://via.placeholder.com/150',
       authorId: 'author123',
+      reviews: [],
+      createdAt: DateTime.now(),
+      category: Category.MainCourse,
     ); // Placeholder
   }
 

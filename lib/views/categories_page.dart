@@ -1,30 +1,27 @@
+// views/categories_page.dart
 import 'package:flutter/material.dart';
-import 'package:recipe_app/models/category.dart';
+import 'package:recipe_app/enums/category.dart'; // Import enum Category
 import 'package:recipe_app/views/widgets/category_card.dart';
 
 class CategoriesPage extends StatelessWidget {
+  final List<Category> _categories = Category.values; // Sử dụng enum
+
+  void _selectCategory(BuildContext context, Category category) {
+    Navigator.pushNamed(context, '/trending', arguments: category.name);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Mock data
-    final categories = [
-      Category(id: '1', name: 'Italian', iconUrl: ''),
-      Category(id: '2', name: 'Mexican', iconUrl: ''),
-    ];
-
-    void _selectCategory(String categoryId) {
-      Navigator.pushNamed(context, '/trending', arguments: categoryId);
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text('Categories')),
       body: GridView.builder(
         gridDelegate:
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemCount: categories.length,
+        itemCount: _categories.length,
         itemBuilder: (context, index) {
-          final category = categories[index];
+          final category = _categories[index];
           return GestureDetector(
-            onTap: () => _selectCategory(category.id),
+            onTap: () => _selectCategory(context, category),
             child: CategoryCard(category: category),
           );
         },
