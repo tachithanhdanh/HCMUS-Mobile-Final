@@ -7,6 +7,17 @@ class RecipeCard extends StatelessWidget {
 
   RecipeCard({required this.recipe});
 
+  // Hàm tính trung bình số sao phần nguyên từ danh sách reviews
+  double getAverageRating() {
+    if (recipe.reviews.isEmpty) return 0;
+    int totalRatings = recipe.reviews
+        .map((review) => review.rating) // Lấy danh sách ratings
+        .reduce((a, b) => a + b); // Tính tổng
+    double average = totalRatings.toDouble() /
+        recipe.reviews.length; // Chuyển đổi totalRatings thành double
+    return double.parse(average.toStringAsFixed(1)); // Lấy phần nguyên
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -109,7 +120,25 @@ class RecipeCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4.0),
                         Text(
-                          recipe.cookTime, // Hiển thị cookTime
+                          recipe.cookTime,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.pinkSubColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.star,
+                          size: 16,
+                          color: AppColors.pinkSubColor,
+                        ),
+                        const SizedBox(width: 4.0),
+                        Text(
+                          '${getAverageRating()}', // Hiển thị số sao trung bình phần nguyên
                           style: TextStyle(
                             fontSize: 14,
                             color: AppColors.pinkSubColor,
