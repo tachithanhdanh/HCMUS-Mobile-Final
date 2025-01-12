@@ -26,7 +26,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable' # Hoặc chỉ định phiên bản cụ thể
+          flutter-version: '3.27.1' # Hoặc chỉ định phiên bản cụ thể
 
       # 4. Ensure dependencies are resolved
       - name: Get Flutter dependencies
