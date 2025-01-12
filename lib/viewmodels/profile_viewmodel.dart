@@ -1,20 +1,20 @@
-// viewmodels/profile_viewmodel.dart
 import 'package:recipe_app/models/user.dart';
 
 class ProfileViewModel {
   // Lấy thông tin người dùng
-  Future<User> getUserProfile(String userId) async {
+  Future<UserProfile> getUserProfile(String userId) async {
     // Logic lấy hồ sơ người dùng
-    return User(
+    return UserProfile(
       id: userId,
-      username: 'JohnDoe',
-      email: 'john@example.com',
-      profilePictureUrl: '',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      avatarUrl: 'https://via.placeholder.com/150',
+      favoriteRecipes: ['recipe1', 'recipe2'],
     ); // Placeholder
   }
 
   // Cập nhật thông tin người dùng
-  Future<void> updateUserProfile(User user) async {
+  Future<void> updateUserProfile(UserProfile user) async {
     // Logic cập nhật hồ sơ
   }
 }
