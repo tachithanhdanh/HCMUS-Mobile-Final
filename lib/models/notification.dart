@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Notification {
   String id;
   String userId; // ID của người dùng nhận thông báo
