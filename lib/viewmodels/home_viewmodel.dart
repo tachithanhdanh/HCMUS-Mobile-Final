@@ -18,6 +18,7 @@ class HomeViewModel {
         reviews: [],
         createdAt: DateTime.now(),
         category: Category.MainCourse,
+        cookTime: '30 mins', // Cập nhật cookTime
       ),
     ]; // Placeholder
   }

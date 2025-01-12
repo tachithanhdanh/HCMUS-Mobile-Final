@@ -1,4 +1,3 @@
-// views/widgets/top_chef_card.dart
 import 'package:flutter/material.dart';
 import '../../models/user.dart'; // Sử dụng UserProfile
 

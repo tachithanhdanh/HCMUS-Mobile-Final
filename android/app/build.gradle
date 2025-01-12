@@ -1,6 +1,6 @@
 plugins {
     id "com.android.application"
-    id "com.google.gms.google-services"
+    // id "com.google.gms.google-services"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -9,6 +9,12 @@ android {
     namespace = "com.hcmuscntn.cookingapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+    preBuild.doFirst {
+        exec {
+            commandLine "bash", "../../scripts/copy_env.sh"
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17 // Sử dụng Java 17
