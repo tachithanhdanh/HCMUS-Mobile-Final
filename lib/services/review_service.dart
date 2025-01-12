@@ -7,7 +7,8 @@ class ReviewService {
   // Thêm review vào Recipe
   Future<void> addReview(String recipeId, Review review) async {
     try {
-      DocumentReference recipeDoc = _firestore.collection('recipes').doc(recipeId);
+      DocumentReference recipeDoc =
+          _firestore.collection('recipes').doc(recipeId);
 
       // Thêm review vào collection reviews của công thức
       await recipeDoc.collection('reviews').add(review.toMap());
@@ -27,7 +28,8 @@ class ReviewService {
           .get();
 
       return snapshot.docs
-          .map((doc) => Review.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              Review.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
       throw Exception('Failed to fetch reviews: ${e.toString()}');
@@ -35,7 +37,8 @@ class ReviewService {
   }
 
   // Cập nhật review
-  Future<void> updateReview(String recipeId, String reviewId, Review updatedReview) async {
+  Future<void> updateReview(
+      String recipeId, String reviewId, Review updatedReview) async {
     try {
       DocumentReference reviewDoc = _firestore
           .collection('recipes')

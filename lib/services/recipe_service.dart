@@ -7,13 +7,12 @@ class RecipeService {
   // Lấy công thức phổ biến
   Future<List<Recipe>> fetchTrendingRecipes() async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection('recipes')
-          .limit(10)
-          .get();
+      QuerySnapshot snapshot =
+          await _firestore.collection('recipes').limit(10).get();
 
       return snapshot.docs
-          .map((doc) => Recipe.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
       throw Exception('Failed to fetch trending recipes: ${e.toString()}');
@@ -29,7 +28,8 @@ class RecipeService {
           .get();
 
       return snapshot.docs
-          .map((doc) => Recipe.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
       throw Exception('Failed to fetch recipes by category: ${e.toString()}');
@@ -46,7 +46,7 @@ class RecipeService {
         throw Exception('Recipe not found');
       }
 
-      return Recipe.fromMap(doc.data() as Map<String, dynamic>);
+      return Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id);
     } catch (e) {
       throw Exception('Failed to fetch recipe details: ${e.toString()}');
     }
@@ -55,8 +55,7 @@ class RecipeService {
   // Lưu công thức vào danh sách yêu thích của người dùng
   Future<void> saveRecipe(String userId, String recipeId) async {
     try {
-      DocumentReference userDoc =
-          _firestore.collection('users').doc(userId);
+      DocumentReference userDoc = _firestore.collection('users').doc(userId);
 
       await userDoc.update({
         'savedRecipes': FieldValue.arrayUnion([recipeId])
