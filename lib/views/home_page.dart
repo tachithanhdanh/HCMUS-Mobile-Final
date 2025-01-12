@@ -15,13 +15,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final HomeViewModel _viewModel = HomeViewModel();
   late Future<List<Recipe>> _trendingRecipes;
-  late Future<List<User>> _topChefs;
+  late Future<List<UserProfile>> _topChefs;
 
   @override
   void initState() {
     super.initState();
     _trendingRecipes = _viewModel.getTrendingRecipes();
-    _topChefs = _viewModel.getTopChefs();
+    _topChefs = _viewModel.getTopChefs(); // Chuyển sang kiểu UserProfile
   }
 
   @override
@@ -35,29 +35,41 @@ class _HomePageState extends State<HomePage> {
             FutureBuilder<List<Recipe>>(
               future: _trendingRecipes,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData) {
                   return Column(
                     children: snapshot.data!.map((recipe) {
                       return RecipeCard(recipe: recipe);
                     }).toList(),
                   );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error loading recipes'));
                 } else {
-                  return CircularProgressIndicator();
+                  return Center(child: Text('No trending recipes available'));
                 }
               },
             ),
+            const SizedBox(height: 16),
+
             // Hiển thị Top Chefs
-            FutureBuilder<List<User>>(
+            FutureBuilder<List<UserProfile>>(
               future: _topChefs,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData) {
                   return Column(
                     children: snapshot.data!.map((chef) {
-                      return TopChefCard(chef: chef);
+                      return TopChefCard(
+                        chef: chef, // Truyền UserProfile trực tiếp
+                      );
                     }).toList(),
                   );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error loading chefs'));
                 } else {
-                  return CircularProgressIndicator();
+                  return Center(child: Text('No top chefs available'));
                 }
               },
             ),
