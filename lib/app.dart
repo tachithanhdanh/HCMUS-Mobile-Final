@@ -9,14 +9,6 @@ import 'views/search_page.dart';
 import 'views/settings_page.dart';
 import 'views/community_page.dart';
 import 'views/trending_page.dart';
-import 'views/recipe_page.dart';
-import 'views/review1_page.dart';
-import 'views/review2_page.dart';
-import 'views/add_recipe1_page.dart';
-import 'views/add_recipe2_page.dart';
-import 'views/edit_recipe_page.dart';
-import 'views/profile_your_recipe_page.dart';
-import 'views/profile_favorites_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
