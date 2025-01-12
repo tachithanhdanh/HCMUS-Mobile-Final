@@ -1,9 +1,9 @@
 class Review {
-  String id; // ID của đánh giá
-  String userId; // ID người dùng viết đánh giá
-  String content; // Nội dung đánh giá
-  int rating; // Thang điểm 1-5
-  DateTime createdAt; // Ngày tạo
+  String id;
+  String userId;
+  String content;
+  int rating; // Thang điểm từ 1 đến 5
+  DateTime createdAt;
 
   Review({
     required this.id,
@@ -13,9 +13,9 @@ class Review {
     required this.createdAt,
   });
 
-  factory Review.fromMap(Map<String, dynamic> data) {
+  factory Review.fromMap(Map<String, dynamic> data, String id) {
     return Review(
-      id: data['id'] ?? '',
+      id: id,
       userId: data['userId'] ?? '',
       content: data['content'] ?? '',
       rating: data['rating'] ?? 0,
@@ -25,7 +25,6 @@ class Review {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'userId': userId,
       'content': content,
       'rating': rating,

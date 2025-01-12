@@ -1,18 +1,34 @@
-// models/user.dart
 class User {
-  final String id;
-  final String username;
-  final String email;
-  final String profilePictureUrl;
-  final List<String> savedRecipes;
-  final List<String> createdRecipes;
+  String id;
+  String name;
+  String email;
+  String avatarUrl;
+  List<String> favoriteRecipes; // Danh sách recipeId yêu thích
 
   User({
     required this.id,
-    required this.username,
+    required this.name,
     required this.email,
-    required this.profilePictureUrl,
-    this.savedRecipes = const [],
-    this.createdRecipes = const [],
+    required this.avatarUrl,
+    required this.favoriteRecipes,
   });
+
+  factory User.fromMap(Map<String, dynamic> data, String id) {
+    return User(
+      id: id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      avatarUrl: data['avatarUrl'] ?? '',
+      favoriteRecipes: List<String>.from(data['favoriteRecipes'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'email': email,
+      'avatarUrl': avatarUrl,
+      'favoriteRecipes': favoriteRecipes,
+    };
+  }
 }
