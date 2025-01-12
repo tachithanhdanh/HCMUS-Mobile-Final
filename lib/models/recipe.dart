@@ -1,35 +1,61 @@
-class Review {
-  String id; // ID của đánh giá
-  String userId; // ID người dùng viết đánh giá
-  String content; // Nội dung đánh giá
-  int rating; // Thang điểm 1-5
-  DateTime createdAt; // Ngày tạo
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:recipe_app/models/review.dart';
 
-  Review({
+import '../enums/category.dart';
+
+class Recipe {
+  String id;
+  String title;
+  String description;
+  List<String> ingredients;
+  List<String> steps;
+  String imageUrl;
+  String authorId;
+  List<Review> reviews;
+  DateTime createdAt;
+  Category category;
+
+  Recipe({
     required this.id,
-    required this.userId,
-    required this.content,
-    required this.rating,
+    required this.title,
+    required this.description,
+    required this.ingredients,
+    required this.steps,
+    required this.imageUrl,
+    required this.authorId,
+    required this.reviews,
     required this.createdAt,
+    required this.category,
   });
 
-  factory Review.fromMap(Map<String, dynamic> data) {
-    return Review(
-      id: data['id'] ?? '',
-      userId: data['userId'] ?? '',
-      content: data['content'] ?? '',
-      rating: data['rating'] ?? 0,
+  factory Recipe.fromMap(Map<String, dynamic> data, String id) {
+    return Recipe(
+      id: id,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      ingredients: List<String>.from(data['ingredients'] ?? []),
+      steps: List<String>.from(data['steps'] ?? []),
+      imageUrl: data['imageUrl'] ?? '',
+      authorId: data['authorId'] ?? '',
+      reviews: List<Review>.from(data['reviews'] ?? []),
       createdAt: (data['createdAt'] as Timestamp).toDate(),
+      category: Category.values.firstWhere(
+          (e) => e.toString() == 'Category.${data['category']}',
+          orElse: () => Category.Other),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'userId': userId,
-      'content': content,
-      'rating': rating,
+      'title': title,
+      'description': description,
+      'ingredients': ingredients,
+      'steps': steps,
+      'imageUrl': imageUrl,
+      'authorId': authorId,
       'createdAt': createdAt,
+      'reviews': reviews,
+      'category': category.name,
     };
   }
 }
