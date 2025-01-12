@@ -14,6 +14,7 @@ class Recipe {
   List<Review> reviews;
   DateTime createdAt;
   Category category;
+  String cookTime;
 
   Recipe({
     required this.id,
@@ -26,6 +27,7 @@ class Recipe {
     required this.reviews,
     required this.createdAt,
     required this.category,
+    required this.cookTime,
   });
 
   factory Recipe.fromMap(Map<String, dynamic> data, String id) {
@@ -42,6 +44,7 @@ class Recipe {
       category: Category.values.firstWhere(
           (e) => e.toString() == 'Category.${data['category']}',
           orElse: () => Category.Other),
+      cookTime: data['cookTime'] ?? '',
     );
   }
 
@@ -56,6 +59,7 @@ class Recipe {
       'createdAt': createdAt,
       'reviews': reviews,
       'category': category.name,
+      'cookTime': cookTime,
     };
   }
 }

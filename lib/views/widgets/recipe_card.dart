@@ -49,8 +49,7 @@ class RecipeCard extends StatelessWidget {
                 right: 8.0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.pink
-                        .withOpacity(1.0), // Đậm hơn và che phủ hoàn toàn
+                    color: AppColors.pink.withOpacity(1.0),
                     shape: BoxShape.circle,
                   ),
                   padding: EdgeInsets.all(6.0),
@@ -91,7 +90,7 @@ class RecipeCard extends StatelessWidget {
                           color: Colors.grey,
                         ),
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis, // Truncate nội dung
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -110,25 +109,7 @@ class RecipeCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4.0),
                         Text(
-                          recipe.time,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.pinkSubColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          size: 16,
-                          color: AppColors.pinkSubColor,
-                        ),
-                        const SizedBox(width: 4.0),
-                        Text(
-                          '100', // Số lượng đánh giá cố định
+                          recipe.cookTime, // Hiển thị cookTime
                           style: TextStyle(
                             fontSize: 14,
                             color: AppColors.pinkSubColor,

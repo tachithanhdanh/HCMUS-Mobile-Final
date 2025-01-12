@@ -6,8 +6,6 @@ class RecipeDetailsViewModel {
   Future<Recipe> getRecipeDetails(String recipeId) async {
     // Logic lấy chi tiết công thức
     return Recipe(
-      description: 'Sample Description',
-      time: '30 mins',
       id: recipeId,
       title: 'Sample Recipe',
       description: 'This is a sample recipe.',
@@ -18,6 +16,7 @@ class RecipeDetailsViewModel {
       reviews: [],
       createdAt: DateTime.now(),
       category: Category.MainCourse,
+      cookTime: '25 mins', // Cập nhật cookTime
     ); // Placeholder
   }
 
