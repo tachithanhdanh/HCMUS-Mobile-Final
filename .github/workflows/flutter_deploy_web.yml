@@ -13,10 +13,18 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
+      - name: Create .env files
+        run: |
+          # Tạo file .env ở thư mục gốc
+          echo "${{ secrets.ENV_FILE_CONTENTS }}" > .env
+          # Tạo file .env ở thư mục assets
+          mkdir -p assets
+          echo "${{ secrets.ENV_FILE_CONTENTS }}" > assets/.env
+
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.27.1'
 
       - name: Build Flutter Web
         run: flutter build web
