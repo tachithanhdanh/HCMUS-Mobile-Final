@@ -22,12 +22,16 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
   void _saveRecipe(String userId, String recipeId) {
     _viewModel.saveRecipe(userId, recipeId);
-    // Hiển thị thông báo thành công
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Recipe saved successfully!')),
+    );
   }
 
   void _shareRecipe(String recipeId) {
     _viewModel.shareRecipe(recipeId);
-    // Thực hiện chia sẻ
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Recipe shared successfully!')),
+    );
   }
 
   @override
@@ -40,36 +44,74 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
           if (snapshot.hasData) {
             final recipe = snapshot.data!;
             return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.network(recipe.imageUrl),
-                  Text(recipe.title,
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  // Hiển thị thành phần
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: recipe.ingredients.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Icon(Icons.check),
-                        title: Text(recipe.ingredients[index]),
-                      );
-                    },
+                  // Hiển thị hình ảnh
+                  recipe.imageUrl.isNotEmpty
+                      ? Image.network(
+                          recipe.imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 200,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(Icons.image, size: 200);
+                          },
+                        )
+                      : Icon(Icons.image, size: 200),
+                  const SizedBox(height: 16),
+
+                  // Tiêu đề và mô tả
+                  Text(
+                    recipe.title,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  // Hiển thị hướng dẫn
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: recipe.instructions.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Text('${index + 1}.'),
-                        title: Text(recipe.instructions[index]),
-                      );
-                    },
+                  const SizedBox(height: 8),
+                  Text(
+                    recipe.description,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
+                  const SizedBox(height: 16),
+
+                  // Thành phần
+                  Text(
+                    'Ingredients',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...recipe.ingredients.map((ingredient) {
+                    return ListTile(
+                      leading: Icon(Icons.check, color: Colors.green),
+                      title: Text(ingredient),
+                    );
+                  }).toList(),
+
+                  const SizedBox(height: 16),
+
+                  // Các bước thực hiện
+                  Text(
+                    'Steps',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...recipe.steps.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final step = entry.value;
+                    return ListTile(
+                      leading: CircleAvatar(
+                        child: Text('${index + 1}'),
+                        backgroundColor: Colors.blueAccent,
+                      ),
+                      title: Text(step),
+                    );
+                  }).toList(),
+
+                  const SizedBox(height: 16),
+
                   // Nút lưu và chia sẻ
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +120,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                         onPressed: () => _saveRecipe('userId', recipe.id),
                         child: Text('Save'),
                       ),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       ElevatedButton(
                         onPressed: () => _shareRecipe(recipe.id),
                         child: Text('Share'),
@@ -88,8 +130,12 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                 ],
               ),
             );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error loading recipe details'),
+            );
           } else {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),

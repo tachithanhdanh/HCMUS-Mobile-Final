@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+*.env
+/assets/.env
+android/app/assets/.env
+android/app/src/main/assets/.env

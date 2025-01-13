@@ -1,9 +1,8 @@
-// views/widgets/top_chef_card.dart
 import 'package:flutter/material.dart';
-import '../../models/user.dart';
+import '../../models/user.dart'; // Sử dụng UserProfile
 
 class TopChefCard extends StatelessWidget {
-  final User chef;
+  final UserProfile chef; // Thay đổi kiểu thành UserProfile
 
   TopChefCard({required this.chef});
 
@@ -11,10 +10,13 @@ class TopChefCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading:
-            CircleAvatar(backgroundImage: NetworkImage(chef.profilePictureUrl)),
-        title: Text(chef.username),
-        subtitle: Text('${chef.createdRecipes.length} Recipes'),
+        leading: CircleAvatar(
+          backgroundImage: chef.avatarUrl.isNotEmpty
+              ? NetworkImage(chef.avatarUrl)
+              : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+        ),
+        title: Text(chef.name),
+        subtitle: Text('${chef.favoriteRecipes.length} Favorite Recipes'),
       ),
     );
   }
