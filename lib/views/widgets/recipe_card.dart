@@ -4,19 +4,14 @@ import '../../constants/colors.dart'; // Import AppColors
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;
+  final bool isFavorite;
+  final VoidCallback onFavoriteToggle;
 
-  RecipeCard({required this.recipe});
-
-  // Hàm tính trung bình số sao phần nguyên từ danh sách reviews
-  double getAverageRating() {
-    if (recipe.reviews.isEmpty) return 0;
-    int totalRatings = recipe.reviews
-        .map((review) => review.rating) // Lấy danh sách ratings
-        .reduce((a, b) => a + b); // Tính tổng
-    double average = totalRatings.toDouble() /
-        recipe.reviews.length; // Chuyển đổi totalRatings thành double
-    return double.parse(average.toStringAsFixed(1)); // Lấy phần nguyên
-  }
+  RecipeCard({
+    required this.recipe,
+    required this.isFavorite,
+    required this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +23,6 @@ class RecipeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Hình ảnh với biểu tượng trái tim
           Stack(
             children: [
               ClipRRect(
@@ -39,14 +33,6 @@ class RecipeCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         height: 150,
                         width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/images/pochita.jpg',
-                            fit: BoxFit.cover,
-                            height: 150,
-                            width: double.infinity,
-                          );
-                        },
                       )
                     : Image.asset(
                         'assets/images/pochita.jpg',
@@ -58,95 +44,47 @@ class RecipeCard extends StatelessWidget {
               Positioned(
                 top: 8.0,
                 right: 8.0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.pink.withOpacity(1.0),
-                    shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(6.0),
-                  child: Icon(
-                    Icons.favorite_border,
-                    color: AppColors.pinkSubColor,
+                child: GestureDetector(
+                  onTap: onFavoriteToggle, // Toggle favorite state
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(6.0),
+                    child: Icon(
+                      isFavorite
+                          ? Icons.favorite // Filled heart
+                          : Icons.favorite_border, // Outlined heart
+                      color: AppColors.pinkSubColor,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-
-          // Nội dung bên dưới
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Bên trái: Title và Description
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        recipe.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.pinkSubColor,
-                        ),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        recipe.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                Text(
+                  recipe.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.pinkSubColor,
                   ),
                 ),
-
-                // Bên phải: Time và Ratings
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.access_time,
-                          size: 16,
-                          color: AppColors.pinkSubColor,
-                        ),
-                        const SizedBox(width: 4.0),
-                        Text(
-                          recipe.cookTime,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.pinkSubColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          size: 16,
-                          color: AppColors.pinkSubColor,
-                        ),
-                        const SizedBox(width: 4.0),
-                        Text(
-                          '${getAverageRating()}', // Hiển thị số sao trung bình phần nguyên
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.pinkSubColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                const SizedBox(height: 4.0),
+                Text(
+                  recipe.description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
