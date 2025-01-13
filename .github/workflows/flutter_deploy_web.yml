@@ -27,7 +27,7 @@ jobs:
           flutter-version: '3.27.1'
 
       - name: Build Flutter Web
-        run: flutter build web
+        run: flutter build web --release --base-href="/HCMUS-Mobile-Final/"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
