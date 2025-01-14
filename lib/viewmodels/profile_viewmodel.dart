@@ -1,4 +1,4 @@
-import 'package:recipe_app/models/user.dart';
+import 'package:recipe_app/models/user_profile.dart';
 
 class ProfileViewModel {
   // Lấy thông tin người dùng
