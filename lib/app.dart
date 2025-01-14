@@ -5,6 +5,11 @@ import 'views/community_page.dart';
 import 'views/add_recipe_page.dart';
 import 'views/categories_page.dart';
 import 'views/profile_page.dart';
+import 'views/onboarding_page.dart';
+import 'views/login_signup_page.dart';
+import 'views/search_page.dart';
+import 'views/settings_page.dart';
+import 'views/trending_page.dart';
 import 'constants/colors.dart'; // Import file colors.dart
 
 class MyApp extends StatelessWidget {
@@ -18,7 +23,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const AppNavigator(), // Dùng một Navigator riêng quản lý stack
+      home: const AppNavigator(),
     );
   }
 }
@@ -33,29 +38,57 @@ class AppNavigator extends StatefulWidget {
 class _AppNavigatorState extends State<AppNavigator> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    HomePage(),
-    CommunityPage(
-      currentUser: mockUsers[0],
-      communityRecipes: mockRecipes,
-      authors: mockUsers,
-      onToggleFavorite: (recipe) {
-        // Handle favorite toggle action
-      },
-    ),
-    AddRecipePage(),
-    CategoriesPage(),
-    ProfilePage(),
+  final List<String> _mainRoutes = [
+    '/home',
+    '/community',
+    '/add_recipe',
+    '/categories',
+    '/profile',
   ];
+
+  Widget _buildPage(String routeName) {
+    switch (routeName) {
+      case '/home':
+        return HomePage();
+      case '/community':
+        return CommunityPage(
+          currentUser: mockUsers[0],
+          communityRecipes: mockRecipes,
+          authors: mockUsers,
+          onToggleFavorite: (recipe) {
+            // Handle favorite toggle action
+          },
+        );
+      case '/add_recipe':
+        return AddRecipePage();
+      case '/categories':
+        return CategoriesPage();
+      case '/profile':
+        return ProfilePage();
+      case '/onboarding':
+        return OnboardingPage();
+      case '/login_signup':
+        return LoginSignupPage();
+      case '/search':
+        return SearchPage();
+      case '/settings':
+        return SettingsPage();
+      case '/trending':
+        return TrendingPage();
+      default:
+        throw Exception('Invalid route: $routeName');
+    }
+  }
 
   void _onNavItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
-    Navigator.of(context).push(
+    print(index);
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => ScaffoldWithNavBar(
-          child: _pages[index],
+          child: _buildPage(_mainRoutes[index]),
           currentIndex: index,
           onNavItemTapped: _onNavItemTapped,
         ),
@@ -66,7 +99,7 @@ class _AppNavigatorState extends State<AppNavigator> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldWithNavBar(
-      child: _pages[_currentIndex],
+      child: _buildPage(_mainRoutes[_currentIndex]),
       currentIndex: _currentIndex,
       onNavItemTapped: _onNavItemTapped,
     );
