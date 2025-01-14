@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_app/models/mock_data.dart';
 import 'views/home_page.dart';
 import 'views/community_page.dart';
 import 'views/add_recipe_page.dart';
 import 'views/categories_page.dart';
 import 'views/profile_page.dart';
-import 'views/onboarding_page.dart';
-import 'views/login_signup_page.dart';
-import 'views/search_page.dart';
-import 'views/settings_page.dart';
-import 'views/trending_page.dart';
-import 'package:recipe_app/constants/colors.dart'; // Import file colors.dart
+import 'constants/colors.dart'; // Import file colors.dart
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -22,37 +18,31 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
-      routes: {
-        '/onboarding': (context) => OnboardingPage(),
-        '/login_signup': (context) => LoginSignupPage(),
-        '/home': (context) => HomePage(),
-        '/categories': (context) => CategoriesPage(),
-        '/profile': (context) => ProfilePage(),
-        '/search': (context) => SearchPage(),
-        '/settings': (context) => SettingsPage(),
-        '/community': (context) => CommunityPage(),
-        '/trending': (context) => TrendingPage(),
-        '/add_recipe': (context) => AddRecipePage(),
-      },
+      home: const AppNavigator(), // Dùng một Navigator riêng quản lý stack
     );
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class AppNavigator extends StatefulWidget {
+  const AppNavigator({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _AppNavigatorState createState() => _AppNavigatorState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _AppNavigatorState extends State<AppNavigator> {
   int _currentIndex = 0;
 
-  // Danh sách các trang được sử dụng trong `BottomNavigationBar`
   final List<Widget> _pages = [
     HomePage(),
-    CommunityPage(),
+    CommunityPage(
+      currentUser: mockUsers[0],
+      communityRecipes: mockRecipes,
+      authors: mockUsers,
+      onToggleFavorite: (recipe) {
+        // Handle favorite toggle action
+      },
+    ),
     AddRecipePage(),
     CategoriesPage(),
     ProfilePage(),
@@ -60,23 +50,52 @@ class _MainScreenState extends State<MainScreen> {
 
   void _onNavItemTapped(int index) {
     setState(() {
-      _currentIndex = index; // Cập nhật chỉ số trang hiện tại
+      _currentIndex = index;
     });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ScaffoldWithNavBar(
+          child: _pages[index],
+          currentIndex: index,
+          onNavItemTapped: _onNavItemTapped,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    return ScaffoldWithNavBar(
+      child: _pages[_currentIndex],
+      currentIndex: _currentIndex,
+      onNavItemTapped: _onNavItemTapped,
+    );
+  }
+}
+
+class ScaffoldWithNavBar extends StatelessWidget {
+  final Widget child;
+  final int currentIndex;
+  final ValueChanged<int> onNavItemTapped;
+
+  const ScaffoldWithNavBar({
+    required this.child,
+    required this.currentIndex,
+    required this.onNavItemTapped,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _pages[_currentIndex], // Hiển thị trang hiện tại
-      ),
+      body: SafeArea(child: child),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavItemTapped,
         type: BottomNavigationBarType.fixed,
         backgroundColor: AppColors.redPinkMain,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
+        currentIndex: currentIndex,
+        onTap: onNavItemTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Community'),

@@ -1,6 +1,6 @@
 import 'package:recipe_app/enums/category.dart';
 import 'package:recipe_app/models/recipe.dart';
-import 'package:recipe_app/models/user.dart';
+import 'package:recipe_app/models/user_profile.dart';
 
 class HomeViewModel {
   // Lấy danh sách công thức phổ biến

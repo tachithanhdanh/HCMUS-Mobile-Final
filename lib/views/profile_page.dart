@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/models/user.dart';
+import 'package:recipe_app/models/user_profile.dart';
 import '../viewmodels/profile_viewmodel.dart';
 
 class ProfilePage extends StatefulWidget {

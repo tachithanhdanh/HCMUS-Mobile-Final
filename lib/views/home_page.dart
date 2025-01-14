@@ -3,7 +3,7 @@ import 'package:recipe_app/constants/colors.dart';
 import 'package:recipe_app/enums/category.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/review.dart';
-import 'package:recipe_app/models/user.dart';
+import 'package:recipe_app/models/user_profile.dart';
 import 'package:recipe_app/views/widgets/recipe_card.dart';
 import 'package:recipe_app/views/widgets/search_popup.dart';
 

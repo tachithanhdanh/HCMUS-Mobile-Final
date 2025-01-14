@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/user.dart'; // Sử dụng UserProfile
+import '../../models/user_profile.dart'; // Sử dụng UserProfile
 
 class TopChefCard extends StatelessWidget {
   final UserProfile chef; // Thay đổi kiểu thành UserProfile
