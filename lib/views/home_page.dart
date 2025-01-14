@@ -5,6 +5,7 @@ import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/review.dart';
 import 'package:recipe_app/models/user.dart';
 import 'package:recipe_app/views/widgets/recipe_card.dart';
+import 'package:recipe_app/views/widgets/search_popup.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -135,7 +136,7 @@ class _HomePageState extends State<HomePage> {
       ],
       createdAt: DateTime.now(),
       category: Category.MainCourse,
-      cookTime: '40 mins',
+      cookTime: '36 mins',
     ),
   ];
 
@@ -197,15 +198,69 @@ class _HomePageState extends State<HomePage> {
                             // Icon Actions
                             Row(
                               children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.notifications_none,
-                                      color: Colors.redAccent),
+                                // Nút Search
+                                Container(
+                                  width: 36, // Chiều rộng của hình tròn
+                                  height: 36, // Chiều cao của hình tròn
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle, // Hình tròn
+                                    color: AppColors.pink, // Màu nền
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return SearchPopup(
+                                            recommendedRecipes: [
+                                              ...trendingRecipes,
+                                              ...yourRecipes
+                                            ], // Kết hợp danh sách
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(Icons.search,
+                                        color: AppColors.pinkSubColor),
+                                    iconSize: 20, // Kích thước biểu tượng
+                                  ),
                                 ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.account_circle,
-                                      color: Colors.redAccent),
+                                const SizedBox(
+                                    width: 8), // Khoảng cách giữa các nút
+                                // Nút Notifications
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.pink,
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      // Xử lý sự kiện thông báo
+                                    },
+                                    icon: Icon(Icons.notifications_none,
+                                        color: AppColors.pinkSubColor),
+                                    iconSize: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // Nút Account
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.pink,
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      // Xử lý sự kiện tài khoản
+                                    },
+                                    icon: Icon(Icons.account_circle,
+                                        color: AppColors.pinkSubColor),
+                                    iconSize: 20,
+                                  ),
                                 ),
                               ],
                             ),
