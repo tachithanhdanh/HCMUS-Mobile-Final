@@ -10,7 +10,8 @@ import 'views/login_signup_page.dart';
 import 'views/search_page.dart';
 import 'views/settings_page.dart';
 import 'views/trending_page.dart';
-import 'constants/colors.dart'; // Import file colors.dart
+import 'constants/colors.dart'; // Import AppColors
+import 'views/widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,121 +24,41 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const AppNavigator(),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => PageWithNavBar(child: HomePage()),
+        '/community': (context) => PageWithNavBar(
+                child: CommunityPage(
+              currentUser: mockUsers[0],
+              communityRecipes: mockRecipes,
+              authors: mockUsers,
+              onToggleFavorite: (recipe) {
+                // Handle favorite toggle action
+              },
+            )),
+        '/add_recipe': (context) => PageWithNavBar(child: AddRecipePage()),
+        '/categories': (context) => PageWithNavBar(child: CategoriesPage()),
+        '/profile': (context) => PageWithNavBar(child: ProfilePage()),
+        '/onboarding': (context) => OnboardingPage(),
+        '/login_signup': (context) => LoginSignupPage(),
+        '/search': (context) => PageWithNavBar(child: SearchPage()),
+        '/settings': (context) => PageWithNavBar(child: SettingsPage()),
+        '/trending': (context) => PageWithNavBar(child: TrendingPage()),
+      },
     );
   }
 }
 
-class AppNavigator extends StatefulWidget {
-  const AppNavigator({super.key});
-
-  @override
-  _AppNavigatorState createState() => _AppNavigatorState();
-}
-
-class _AppNavigatorState extends State<AppNavigator> {
-  int _currentIndex = 0;
-
-  final List<String> _mainRoutes = [
-    '/home',
-    '/community',
-    '/add_recipe',
-    '/categories',
-    '/profile',
-  ];
-
-  Widget _buildPage(String routeName) {
-    switch (routeName) {
-      case '/home':
-        return HomePage();
-      case '/community':
-        return CommunityPage(
-          currentUser: mockUsers[0],
-          communityRecipes: mockRecipes,
-          authors: mockUsers,
-          onToggleFavorite: (recipe) {
-            // Handle favorite toggle action
-          },
-        );
-      case '/add_recipe':
-        return AddRecipePage();
-      case '/categories':
-        return CategoriesPage();
-      case '/profile':
-        return ProfilePage();
-      case '/onboarding':
-        return OnboardingPage();
-      case '/login_signup':
-        return LoginSignupPage();
-      case '/search':
-        return SearchPage();
-      case '/settings':
-        return SettingsPage();
-      case '/trending':
-        return TrendingPage();
-      default:
-        throw Exception('Invalid route: $routeName');
-    }
-  }
-
-  void _onNavItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    print(index);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => ScaffoldWithNavBar(
-          child: _buildPage(_mainRoutes[index]),
-          currentIndex: index,
-          onNavItemTapped: _onNavItemTapped,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScaffoldWithNavBar(
-      child: _buildPage(_mainRoutes[_currentIndex]),
-      currentIndex: _currentIndex,
-      onNavItemTapped: _onNavItemTapped,
-    );
-  }
-}
-
-class ScaffoldWithNavBar extends StatelessWidget {
+class PageWithNavBar extends StatelessWidget {
   final Widget child;
-  final int currentIndex;
-  final ValueChanged<int> onNavItemTapped;
 
-  const ScaffoldWithNavBar({
-    required this.child,
-    required this.currentIndex,
-    required this.onNavItemTapped,
-    super.key,
-  });
+  PageWithNavBar({required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: child),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.redPinkMain,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        currentIndex: currentIndex,
-        onTap: onNavItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Community'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Add'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.category), label: 'Categories'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
