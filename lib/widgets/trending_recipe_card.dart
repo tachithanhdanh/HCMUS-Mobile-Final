@@ -46,14 +46,14 @@ class TrendingRecipeCard extends StatelessWidget {
                       ? Image.network(
                           recipe.imageUrl,
                           fit: BoxFit.cover,
-                          height: 150,
-                          width: 150,
+                          height: 120,
+                          width: 120,
                         )
                       : Image.asset(
                           'assets/images/pochita.jpg', // Hình mặc định
                           fit: BoxFit.cover,
-                          height: 150,
-                          width: 150,
+                          height: 135,
+                          width: 135,
                         ),
                 ),
                 Positioned(
@@ -79,7 +79,7 @@ class TrendingRecipeCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(width: 16.0),
+            const SizedBox(width: 8.0),
             // Nội dung
             Expanded(
               child: Column(
@@ -114,7 +114,7 @@ class TrendingRecipeCard extends StatelessWidget {
                       color: AppColors.redPinkMain,
                     ),
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 8.0),
                   // Thông tin nấu ăn
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,14 +124,14 @@ class TrendingRecipeCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.access_time,
-                            size: 16,
+                            size: 12,
                             color: AppColors.redPinkMain,
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(width: 2.0),
                           Text(
                             recipe.cookTime,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: AppColors.textColorBrown,
                             ),
                           ),
@@ -142,14 +142,20 @@ class TrendingRecipeCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.bar_chart,
-                            size: 16,
+                            size: 12,
                             color: AppColors.redPinkMain,
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(width: 2.0),
                           Text(
-                            recipe.difficulty.toString().split('.').last,
+                            recipe.difficulty
+                                .toString()
+                                .split('.')
+                                .last
+                                .replaceAllMapped(
+                                    RegExp(r'(?<=[a-z])(?=[A-Z])'),
+                                    (match) => ' '),
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: AppColors.textColorBrown,
                             ),
                           ),
@@ -160,14 +166,14 @@ class TrendingRecipeCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.star,
-                            size: 16,
+                            size: 12,
                             color: AppColors.redPinkMain,
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(width: 2.0),
                           Text(
                             getAverageRating().toString(),
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: AppColors.textColorBrown,
                             ),
                           ),

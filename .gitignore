@@ -48,3 +48,4 @@ app.*.map.json
 /assets/.env
 android/app/assets/.env
 android/app/src/main/assets/.env
+firebase-adminsdk-key.json

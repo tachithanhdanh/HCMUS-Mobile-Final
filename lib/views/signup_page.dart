@@ -29,7 +29,7 @@ class _SignupPageState extends State<SignupPage> {
           _passwordController.text,
           _nameController.text.trim(),
         );
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/login_signup');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),

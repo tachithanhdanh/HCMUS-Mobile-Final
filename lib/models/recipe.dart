@@ -21,7 +21,7 @@ class Recipe {
   DateTime createdAt;
   Category category;
   String cookTime;
-  Difficulty difficulty; // Thêm độ khó
+  Difficulty difficulty;
 
   Recipe({
     required this.id,
@@ -35,10 +35,20 @@ class Recipe {
     required this.createdAt,
     required this.category,
     required this.cookTime,
-    required this.difficulty, // Thêm độ khó vào constructor
+    required this.difficulty,
   });
 
   factory Recipe.fromMap(Map<String, dynamic> data, String id) {
+    List<Review> parseReviews(dynamic reviewsData) {
+      if (reviewsData is List) {
+        return reviewsData
+            .map((review) =>
+                Review.fromMap(review as Map<String, dynamic>, review['id']))
+            .toList();
+      }
+      return [];
+    }
+
     return Recipe(
       id: id,
       title: data['title'] ?? '',
@@ -47,16 +57,15 @@ class Recipe {
       steps: List<String>.from(data['steps'] ?? []),
       imageUrl: data['imageUrl'] ?? '',
       authorId: data['authorId'] ?? '',
-      reviews: List<Review>.from(data['reviews'] ?? []),
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      reviews: parseReviews(data['reviews']),
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       category: Category.values.firstWhere(
           (e) => e.toString() == 'Category.${data['category']}',
           orElse: () => Category.Other),
       cookTime: data['cookTime'] ?? '',
       difficulty: Difficulty.values.firstWhere(
           (e) => e.toString() == 'Difficulty.${data['difficulty']}',
-          orElse: () =>
-              Difficulty.Medium), // Mặc định là Medium nếu không tìm thấy
+          orElse: () => Difficulty.Medium),
     );
   }
 
@@ -68,11 +77,11 @@ class Recipe {
       'steps': steps,
       'imageUrl': imageUrl,
       'authorId': authorId,
-      'createdAt': createdAt,
-      'reviews': reviews,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'reviews': reviews.map((review) => review.toMap()).toList(),
       'category': category.name,
       'cookTime': cookTime,
-      'difficulty': difficulty.name, // Thêm độ khó vào bản đồ
+      'difficulty': difficulty.name,
     };
   }
 }

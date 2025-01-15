@@ -39,11 +39,7 @@ class MyApp extends StatelessWidget {
 
           // Nếu đã đăng nhập
           if (snapshot.hasData) {
-            return PageWithNavBar(
-                child: HomePage(
-              currentUser: mockUsers[0],
-              allRecipes: mockRecipes,
-            ));
+            return PageWithNavBar(child: HomePage());
           }
 
           // Nếu chưa đăng nhập
@@ -52,17 +48,10 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/home': (context) => PageWithNavBar(
-              child: HomePage(
-                currentUser: mockUsers[0],
-                allRecipes: mockRecipes,
-              ),
+              child: HomePage(),
             ),
         '/community': (context) => PageWithNavBar(
-              child: CommunityPage(
-                currentUser: mockUsers[0],
-                communityRecipes: mockRecipes,
-                authors: mockUsers,
-              ),
+              child: CommunityPage(),
             ),
         '/add_recipe': (context) => PageWithNavBar(child: AddRecipePage()),
         '/categories': (context) => PageWithNavBar(child: CategoriesPage()),
@@ -73,11 +62,7 @@ class MyApp extends StatelessWidget {
         '/search': (context) => PageWithNavBar(child: SearchPage()),
         '/settings': (context) => PageWithNavBar(child: SettingsPage()),
         '/trending': (context) => PageWithNavBar(
-              child: TrendingPage(
-                currentUser: mockUsers[0],
-                trendingRecipes: mockRecipes,
-                authors: mockUsers,
-              ),
+              child: TrendingPage(),
             ),
         '/notifications': (context) =>
             PageWithNavBar(child: NotificationsPage()),
