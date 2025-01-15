@@ -1,50 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:recipe_app/constants/colors.dart';
 import 'package:recipe_app/widgets/icon_actions.dart';
 import 'package:recipe_app/widgets/recipe_card.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/user_profile.dart';
 import 'package:recipe_app/widgets/trending_recipe_card.dart';
+import 'package:recipe_app/services/recipe_service.dart';
+import 'package:recipe_app/services/user_service.dart';
+import 'package:recipe_app/providers/user_provider.dart';
 
 class TrendingPage extends StatefulWidget {
-  final UserProfile currentUser;
-  final List<Recipe> trendingRecipes;
-  final List<UserProfile> authors;
-
-  TrendingPage({
-    required this.currentUser,
-    required this.trendingRecipes,
-    required this.authors,
-  });
+  TrendingPage({Key? key}) : super(key: key);
 
   @override
   _TrendingPageState createState() => _TrendingPageState();
 }
 
 class _TrendingPageState extends State<TrendingPage> {
-  late List<Recipe> sortedRecipes;
-  late UserProfile currentUser;
-  late Recipe mostReviewedRecipe;
+  List<Recipe> sortedRecipes = []; // Khởi tạo danh sách rỗng
+  UserProfile? currentUser;
+  Recipe? mostReviewedRecipe; // Đặt nullable vì có thể chưa có dữ liệu
+  List<UserProfile> authors = [];
+  bool isLoading = true;
+
+  final RecipeService _recipeService = RecipeService();
+  final UserService _userService = UserService();
 
   @override
   void initState() {
     super.initState();
-    currentUser = widget.currentUser;
+    _initData();
+  }
 
-    // Sắp xếp danh sách công thức theo số lượng đánh giá giảm dần
-    sortedRecipes = [...widget.trendingRecipes]
-      ..sort((a, b) => b.reviews.length.compareTo(a.reviews.length));
+  Future<void> _initData() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    currentUser = userProvider.currentUser;
 
-    // Tìm công thức có nhiều lượt đánh giá nhất
-    mostReviewedRecipe = sortedRecipes.first;
+    if (currentUser == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      // Fetch all recipes
+      final recipes = await _recipeService.fetchAllRecipes();
+
+      // Fetch authors based on recipe authorIds
+      final userIds = recipes.map((recipe) => recipe.authorId).toSet().toList();
+      final fetchedAuthors = await _userService.fetchAuthorsByUserIds(userIds);
+
+      // Sort recipes by reviews
+      final sorted = [...recipes]
+        ..sort((a, b) => b.reviews.length.compareTo(a.reviews.length));
+
+      setState(() {
+        sortedRecipes = sorted;
+        mostReviewedRecipe = sorted.first;
+        authors = fetchedAuthors;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error loading data: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        color: Colors.transparent, // Màu nền trong suốt
+        color: Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: SingleChildScrollView(
@@ -59,59 +94,58 @@ class _TrendingPageState extends State<TrendingPage> {
                       icon:
                           Icon(Icons.arrow_back, color: AppColors.redPinkMain),
                       onPressed: () {
-                        Navigator.of(context).pop(); // Back action
+                        Navigator.of(context).pop();
                       },
                     ),
                     Text(
                       "Trending Recipes",
                       style: TextStyle(
                         color: AppColors.redPinkMain,
-                        fontSize: 24,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // Custom Icon Actions
                     IconActions(
-                      recipes: [...widget.trendingRecipes],
+                      recipes: sortedRecipes,
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                // Nội dung Trending Page
+                // Most Reviewed Recipe Section
                 Container(
-                  width: double.infinity, // Chiếm toàn bộ chiều ngang
+                  width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.redPinkMain, // Màu nền
-                    borderRadius: BorderRadius.circular(12), // Bo viền
+                    color: AppColors.redPinkMain,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Tiêu đề
                       Text(
-                        "Most Reviewed", // Tiêu đề
+                        "Most Reviewed",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white, // Chữ màu trắng
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Hiển thị recipe có nhiều lượt reviewed nhất
                       RecipeCard(
-                        recipe: mostReviewedRecipe,
-                        isFavorite: currentUser.favoriteRecipes
-                            .contains(mostReviewedRecipe.id),
+                        recipe: mostReviewedRecipe!,
+                        isFavorite: currentUser?.favoriteRecipes
+                                .contains(mostReviewedRecipe!.id) ??
+                            false,
                         onFavoriteToggle: () {
                           setState(() {
-                            if (currentUser.favoriteRecipes
-                                .contains(mostReviewedRecipe.id)) {
-                              currentUser.favoriteRecipes
-                                  .remove(mostReviewedRecipe.id);
+                            if (currentUser?.favoriteRecipes
+                                    .contains(mostReviewedRecipe!.id) ??
+                                false) {
+                              currentUser?.favoriteRecipes
+                                  .remove(mostReviewedRecipe!.id);
                             } else {
-                              currentUser.favoriteRecipes
-                                  .add(mostReviewedRecipe.id);
+                              currentUser?.favoriteRecipes
+                                  .add(mostReviewedRecipe!.id);
                             }
                           });
                         },
@@ -124,25 +158,33 @@ class _TrendingPageState extends State<TrendingPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Danh sách các recipe
                     ...sortedRecipes.map((recipe) {
-                      // Lấy thông tin tác giả
-                      final author = widget.authors
-                          .firstWhere((user) => user.id == recipe.authorId);
+                      final author = authors.firstWhere(
+                        (user) => user.id == recipe.authorId,
+                        orElse: () => UserProfile(
+                          id: '',
+                          name: 'Unknown',
+                          email: '',
+                          avatarUrl: '',
+                          favoriteRecipes: [],
+                        ),
+                      );
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: TrendingRecipeCard(
                           recipe: recipe,
-                          isFavorite:
-                              currentUser.favoriteRecipes.contains(recipe.id),
+                          isFavorite: currentUser?.favoriteRecipes
+                                  .contains(recipe.id) ??
+                              false,
                           onFavoriteToggle: () {
                             setState(() {
-                              if (currentUser.favoriteRecipes
-                                  .contains(recipe.id)) {
-                                currentUser.favoriteRecipes.remove(recipe.id);
+                              if (currentUser?.favoriteRecipes
+                                      .contains(recipe.id) ??
+                                  false) {
+                                currentUser?.favoriteRecipes.remove(recipe.id);
                               } else {
-                                currentUser.favoriteRecipes.add(recipe.id);
+                                currentUser?.favoriteRecipes.add(recipe.id);
                               }
                             });
                           },

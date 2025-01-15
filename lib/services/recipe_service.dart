@@ -4,16 +4,38 @@ import '../models/recipe.dart';
 class RecipeService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Lấy công thức phổ biến
-  Future<List<Recipe>> fetchTrendingRecipes() async {
+  // Lấy danh sách công thức (toàn bộ)
+  Future<List<Recipe>> fetchAllRecipes() async {
     try {
-      QuerySnapshot snapshot =
-          await _firestore.collection('recipes').limit(10).get();
+      QuerySnapshot snapshot = await _firestore.collection('recipes').get();
 
       return snapshot.docs
           .map((doc) =>
               Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch all recipes: ${e.toString()}');
+    }
+  }
+
+  // Lấy công thức phổ biến nhất (sắp xếp theo số lượt đánh giá)
+  Future<List<Recipe>> fetchTrendingRecipes() async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('recipes')
+          .get(); // Lấy tất cả các công thức hoặc tùy chỉnh để hạn chế kết quả
+
+      // Chuyển đổi dữ liệu và sắp xếp theo số lượng reviews
+      List<Recipe> recipes = snapshot.docs
+          .map((doc) =>
+              Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+
+      // Sắp xếp danh sách công thức theo số lượng đánh giá giảm dần
+      recipes.sort((a, b) => b.reviews.length.compareTo(a.reviews.length));
+
+      // Trả về tối đa 10 công thức
+      return recipes.take(10).toList();
     } catch (e) {
       throw Exception('Failed to fetch trending recipes: ${e.toString()}');
     }
@@ -62,6 +84,60 @@ class RecipeService {
       });
     } catch (e) {
       throw Exception('Failed to save recipe: ${e.toString()}');
+    }
+  }
+
+  // Lấy danh sách công thức theo User ID
+  Future<List<Recipe>> fetchRecipesByUserId(String userId) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('recipes')
+          .where('authorId', isEqualTo: userId)
+          .get();
+
+      return snapshot.docs
+          .map((doc) =>
+              Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch recipes by user ID: ${e.toString()}');
+    }
+  }
+
+  Future<Recipe?> fetchMostTrendingRecipe() async {
+    try {
+      // Lấy dữ liệu từ Firestore
+      QuerySnapshot snapshot = await _firestore.collection('recipes').get();
+
+      if (snapshot.docs.isEmpty) {
+        return null; // Không có công thức nào
+      }
+
+      // Chuyển đổi dữ liệu từ Firestore sang danh sách Recipe
+      List<Recipe> recipes = snapshot.docs
+          .map((doc) {
+            try {
+              return Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+            } catch (e) {
+              print('Error parsing recipe: $e');
+              return null; // Bỏ qua công thức không hợp lệ
+            }
+          })
+          .whereType<Recipe>()
+          .toList(); // Loại bỏ các giá trị null
+
+      if (recipes.isEmpty) {
+        return null; // Không có công thức hợp lệ
+      }
+
+      // Tìm công thức có nhiều review nhất
+      Recipe mostTrendingRecipe = recipes
+          .reduce((a, b) => (a.reviews.length > b.reviews.length) ? a : b);
+
+      return mostTrendingRecipe;
+    } catch (e) {
+      // Xử lý lỗi tổng quát
+      throw Exception('Failed to fetch most trending recipe: ${e.toString()}');
     }
   }
 }

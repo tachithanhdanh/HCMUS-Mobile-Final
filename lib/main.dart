@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart'; // Import Provider
+import 'package:recipe_app/providers/user_provider.dart';
 import 'firebase_options.dart';
 import 'app.dart';
 
@@ -30,5 +32,10 @@ void main() async {
     print("Stack Trace: $stackTrace");
   }
 
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => UserProvider(), // Khởi tạo UserProvider
+      child: MyApp(),
+    ),
+  );
 }

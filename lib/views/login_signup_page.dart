@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/user_service.dart';
 import '../constants/colors.dart';
+import 'package:provider/provider.dart';
+import '../models/user_profile.dart';
+import '../providers/user_provider.dart';
 
 class LoginSignupPage extends StatefulWidget {
   @override
@@ -15,15 +18,25 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
 
   Future<void> _handleLogin() async {
     try {
-      await _userService.login(
+      UserProfile loggedInUser = await _userService.login(
         _emailController.text.trim(),
         _passwordController.text,
       );
-      Navigator.pushReplacementNamed(context, '/home');
+
+      // Đảm bảo widget vẫn đang "mounted"
+      if (mounted) {
+        // Cập nhật thông tin người dùng trong UserProvider
+        Provider.of<UserProvider>(context, listen: false).setUser(loggedInUser);
+
+        // Chuyển sang màn hình chính
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
     }
   }
 
