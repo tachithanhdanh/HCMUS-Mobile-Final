@@ -27,13 +27,19 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/home',
       routes: {
-        '/home': (context) => PageWithNavBar(child: HomePage()),
+        '/home': (context) => PageWithNavBar(
+              child: HomePage(
+                currentUser: mockUsers[0],
+                allRecipes: mockRecipes,
+              ),
+            ),
         '/community': (context) => PageWithNavBar(
-                child: CommunityPage(
-              currentUser: mockUsers[0],
-              communityRecipes: mockRecipes,
-              authors: mockUsers,
-            )),
+              child: CommunityPage(
+                currentUser: mockUsers[0],
+                communityRecipes: mockRecipes,
+                authors: mockUsers,
+              ),
+            ),
         '/add_recipe': (context) => PageWithNavBar(child: AddRecipePage()),
         '/categories': (context) => PageWithNavBar(child: CategoriesPage()),
         '/profile': (context) => PageWithNavBar(child: ProfilePage()),
@@ -41,7 +47,13 @@ class MyApp extends StatelessWidget {
         '/login_signup': (context) => LoginSignupPage(),
         '/search': (context) => PageWithNavBar(child: SearchPage()),
         '/settings': (context) => PageWithNavBar(child: SettingsPage()),
-        '/trending': (context) => PageWithNavBar(child: TrendingPage()),
+        '/trending': (context) => PageWithNavBar(
+              child: TrendingPage(
+                currentUser: mockUsers[0],
+                trendingRecipes: mockRecipes,
+                authors: mockUsers,
+              ),
+            ),
         '/notifications': (context) =>
             PageWithNavBar(child: NotificationsPage()),
       },

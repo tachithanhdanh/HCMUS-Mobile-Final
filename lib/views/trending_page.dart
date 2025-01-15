@@ -1,8 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/constants/colors.dart';
 import 'package:recipe_app/widgets/icon_actions.dart';
+import 'package:recipe_app/widgets/recipe_card.dart';
+import 'package:recipe_app/models/recipe.dart';
+import 'package:recipe_app/models/user_profile.dart';
 
-class TrendingPage extends StatelessWidget {
+class TrendingPage extends StatefulWidget {
+  final UserProfile currentUser;
+  final List<Recipe> trendingRecipes;
+  final List<UserProfile> authors;
+
+  TrendingPage({
+    required this.currentUser,
+    required this.trendingRecipes,
+    required this.authors,
+  });
+
+  @override
+  _TrendingPageState createState() => _TrendingPageState();
+}
+
+class _TrendingPageState extends State<TrendingPage> {
+  late List<Recipe> filteredRecipes;
+  late UserProfile currentUser;
+  late Recipe mostReviewedRecipe;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = widget.currentUser;
+    filteredRecipes = [...widget.trendingRecipes];
+
+    // Tìm công thức có nhiều lượt đánh giá nhất
+    mostReviewedRecipe = filteredRecipes
+        .reduce((a, b) => (a.reviews.length > b.reviews.length) ? a : b);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +68,13 @@ class TrendingPage extends StatelessWidget {
                       ),
                     ),
                     // Custom Icon Actions
-                    IconActions(recipes: []),
+                    IconActions(
+                      recipes: [...widget.trendingRecipes],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 // Nội dung Trending Page
-                // Your Recipes Section
                 Container(
                   width: double.infinity, // Chiếm toàn bộ chiều ngang
                   decoration: BoxDecoration(
@@ -53,7 +87,7 @@ class TrendingPage extends StatelessWidget {
                     children: [
                       // Tiêu đề
                       Text(
-                        "Your Recipes",
+                        "Most Reviewed", // Tiêu đề
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -61,6 +95,24 @@ class TrendingPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      // Hiển thị recipe có nhiều lượt reviewed nhất
+                      RecipeCard(
+                        recipe: mostReviewedRecipe,
+                        isFavorite: currentUser.favoriteRecipes
+                            .contains(mostReviewedRecipe.id),
+                        onFavoriteToggle: () {
+                          setState(() {
+                            if (currentUser.favoriteRecipes
+                                .contains(mostReviewedRecipe.id)) {
+                              currentUser.favoriteRecipes
+                                  .remove(mostReviewedRecipe.id);
+                            } else {
+                              currentUser.favoriteRecipes
+                                  .add(mostReviewedRecipe.id);
+                            }
+                          });
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -68,23 +120,6 @@ class TrendingPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildIconButton(
-      BuildContext context, IconData icon, VoidCallback onPressed) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.pink,
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, color: AppColors.pinkSubColor),
-        iconSize: 20,
       ),
     );
   }

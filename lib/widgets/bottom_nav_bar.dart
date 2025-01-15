@@ -62,7 +62,10 @@ class BottomNavBar extends StatelessWidget {
   Widget _buildPage(String routeName) {
     switch (routeName) {
       case '/home':
-        return HomePage();
+        return HomePage(
+          currentUser: mockUsers[0],
+          allRecipes: mockRecipes,
+        );
       case '/community':
         return CommunityPage(
           currentUser: mockUsers[0],
