@@ -5,4 +5,6 @@ enum Category {
   Beverage, // Đồ uống
   Snack, // Đồ ăn nhẹ
   Other, // Danh mục khác
+  Breakfast,
+  Soup,
 }

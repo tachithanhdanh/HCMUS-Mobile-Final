@@ -203,7 +203,9 @@ class CommunityRecipeCard extends StatelessWidget {
 
   double getAverageRating() {
     if (recipe.reviews.isEmpty) return 0.0;
-    return recipe.reviews.map((e) => e.rating).reduce((a, b) => a + b) /
-        recipe.reviews.length;
+    double average =
+        recipe.reviews.map((e) => e.rating).reduce((a, b) => a + b) /
+            recipe.reviews.length;
+    return double.parse(average.toStringAsFixed(1));
   }
 }

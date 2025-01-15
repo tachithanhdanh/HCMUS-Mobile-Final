@@ -68,9 +68,6 @@ class BottomNavBar extends StatelessWidget {
           currentUser: mockUsers[0],
           communityRecipes: mockRecipes,
           authors: mockUsers,
-          onToggleFavorite: (recipe) {
-            // Handle favorite toggle action
-          },
         );
       case '/add_recipe':
         return AddRecipePage();
