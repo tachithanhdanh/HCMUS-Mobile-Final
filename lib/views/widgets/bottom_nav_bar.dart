@@ -39,11 +39,11 @@ class BottomNavBar extends StatelessWidget {
         final targetRoute = routeMapping[index];
         if (targetRoute != null && targetRoute != currentRoute) {
           Navigator.of(context).push(
-            // Sử dụng `push` thay vì `pushReplacement`
             MaterialPageRoute(
               builder: (context) => PageWithNavBar(
                 child: _buildPage(targetRoute),
               ),
+              settings: RouteSettings(name: targetRoute), // Cung cấp tên route
             ),
           );
         }
