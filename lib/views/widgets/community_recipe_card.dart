@@ -34,7 +34,7 @@ class CommunityRecipeCard extends StatelessWidget {
                 CircleAvatar(
                   backgroundImage: author.avatarUrl.isNotEmpty
                       ? NetworkImage(author.avatarUrl)
-                      : AssetImage('images/gojo_satoru.png') as ImageProvider,
+                      : AssetImage('assets/images/gojo_satoru.png'),
                   radius: 20.0,
                 ),
                 SizedBox(width: 8.0),
@@ -74,7 +74,7 @@ class CommunityRecipeCard extends StatelessWidget {
                           height: 180.0,
                         )
                       : Image.asset(
-                          'images/pochita.jpg',
+                          'assets/images/pochita.jpg',
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 180.0,
