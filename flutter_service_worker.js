@@ -4,10 +4,10 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
 const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
-"main.dart.js": "5435b63ae09c8813796c59e6f3a3a8aa",
+"main.dart.js": "bfd0208610d822e678d27507842487bb",
 "assets/FontManifest.json": "1b1e7812d9eb9f666db8444d7dde1b20",
 "assets/AssetManifest.bin": "4b79d1a61b78f0ba558537ab04c3217c",
-"assets/fonts/MaterialIcons-Regular.otf": "03b2e63c38e33d16efa90ac798983040",
+"assets/fonts/MaterialIcons-Regular.otf": "ed328b63ea45b682e214a80c89d1333a",
 "assets/packages/material_design_icons_flutter/lib/fonts/materialdesignicons-webfont.ttf": "d10ac4ee5ebe8c8fff90505150ba2a76",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "e986ebe42ef785b27164c36a9abc7818",
 "assets/assets/images/gojo_satoru.png": "a5f3644943bef1871dbd4e06a0ec6203",
@@ -35,7 +35,7 @@ const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "version.json": "576b29847b370372d82ce919c7c15dce",
-"flutter_bootstrap.js": "3536d154f926c3b1c1eaeaf8d6c2cf68"};
+"flutter_bootstrap.js": "95d16f4f299926c1ce5a39b3d2be6ce8"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
