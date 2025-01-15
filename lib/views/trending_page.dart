@@ -101,7 +101,7 @@ class _TrendingPageState extends State<TrendingPage> {
                       "Trending Recipes",
                       style: TextStyle(
                         color: AppColors.redPinkMain,
-                        fontSize: 24,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

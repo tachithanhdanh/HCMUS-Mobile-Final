@@ -124,14 +124,14 @@ class TrendingRecipeCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.access_time,
-                            size: 16,
+                            size: 12,
                             color: AppColors.redPinkMain,
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(width: 2.0),
                           Text(
                             recipe.cookTime,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: AppColors.textColorBrown,
                             ),
                           ),
@@ -142,10 +142,10 @@ class TrendingRecipeCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.bar_chart,
-                            size: 16,
+                            size: 12,
                             color: AppColors.redPinkMain,
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(width: 2.0),
                           Text(
                             recipe.difficulty
                                 .toString()
@@ -155,7 +155,7 @@ class TrendingRecipeCard extends StatelessWidget {
                                     RegExp(r'(?<=[a-z])(?=[A-Z])'),
                                     (match) => ' '),
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: AppColors.textColorBrown,
                             ),
                           ),
@@ -166,14 +166,14 @@ class TrendingRecipeCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.star,
-                            size: 16,
+                            size: 12,
                             color: AppColors.redPinkMain,
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(width: 2.0),
                           Text(
                             getAverageRating().toString(),
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: AppColors.textColorBrown,
                             ),
                           ),
