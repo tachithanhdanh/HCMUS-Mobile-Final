@@ -32,9 +32,6 @@ class MyApp extends StatelessWidget {
               currentUser: mockUsers[0],
               communityRecipes: mockRecipes,
               authors: mockUsers,
-              onToggleFavorite: (recipe) {
-                // Handle favorite toggle action
-              },
             )),
         '/add_recipe': (context) => PageWithNavBar(child: AddRecipePage()),
         '/categories': (context) => PageWithNavBar(child: CategoriesPage()),
