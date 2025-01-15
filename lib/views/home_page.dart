@@ -276,13 +276,44 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // Trending Recipe Section
-                  Text(
-                    "Trending Recipe",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.redPinkMain,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Tiêu đề
+                      Text(
+                        "Trending Recipe",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.redPinkMain,
+                        ),
+                      ),
+                      // Dòng chữ "View More" với biểu tượng
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed('/trending');
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              "View More",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.redPinkMain,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                                width: 4), // Khoảng cách giữa chữ và biểu tượng
+                            Icon(
+                              Icons.arrow_forward, // Biểu tượng mũi tên
+                              size: 16,
+                              color: AppColors.redPinkMain,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   _buildTrendingRecipes(trendingRecipes),
