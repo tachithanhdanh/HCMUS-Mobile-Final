@@ -1,11 +1,11 @@
 from datetime import datetime
 import random
+import uuid
 from firebase_admin import credentials, firestore, initialize_app
 
 # Khởi tạo Firebase Admin SDK
 cred = credentials.Certificate("../firebase-adminsdk-key.json")
 initialize_app(cred)
-
 
 def create_reviews():
     db = firestore.client()
@@ -55,9 +55,8 @@ def create_reviews():
         ],
     }
 
-    # Tạo review
-    for _ in range(50):  # Tổng cộng 50 reviews
-        recipe = random.choice(recipes)
+    # Tạo review cho mỗi recipe
+    for recipe in recipes:
         recipe_id = recipe.id
         recipe_data = recipe.to_dict()
         author_id = recipe_data.get("authorId", "")
@@ -67,30 +66,34 @@ def create_reviews():
         if not reviewers:
             continue  # Bỏ qua nếu không có người review hợp lệ
 
-        reviewer = random.choice(reviewers)
-        reviewer_id = reviewer.id
-
-        # Random số sao với trọng số
-        rating = random.choices([1, 2, 3, 4, 5], weights=[1, 2, 3, 3, 1])[0]
-        content = random.choice(review_texts[rating])
-
-        # Tạo dữ liệu review
-        review_data = {
-            "id": db.collection("recipes").document().id,  # Tạo ID ngẫu nhiên
-            "userId": reviewer_id,
-            "content": content,
-            "rating": rating,
-            "createdAt": datetime.utcnow().isoformat(),  # Lấy thời gian hiện tại
-        }
-
-        # Lấy danh sách review hiện tại và thêm review mới
+        # Random số lượng reviews từ 2 đến 7
+        num_reviews = random.randint(2, 7)
         recipe_reviews = recipe_data.get("reviews", [])
-        recipe_reviews.append(review_data)
+
+        for _ in range(num_reviews):
+            reviewer = random.choice(reviewers)
+            reviewer_id = reviewer.id
+
+            # Random số sao với trọng số
+            rating = random.choices([1, 2, 3, 4, 5], weights=[1, 2, 3, 3, 1])[0]
+            content = random.choice(review_texts[rating])
+
+            # Tạo dữ liệu review
+            review_data = {
+                "id": str(uuid.uuid4()),  # Tạo ID ngẫu nhiên bằng UUID
+                "userId": reviewer_id,
+                "content": content,
+                "rating": rating,
+                "createdAt": datetime.utcnow().isoformat(),  # Lấy thời gian hiện tại
+            }
+
+            # Thêm review mới vào danh sách
+            recipe_reviews.append(review_data)
 
         # Cập nhật lại trường reviews trong recipe
         db.collection("recipes").document(recipe_id).update({"reviews": recipe_reviews})
 
-        print(f"Added review for recipe {recipe_data['title']} by user {reviewer_id} with rating {rating}")
+        print(f"Added {num_reviews} reviews for recipe {recipe_data.get('title', 'Unknown Title')}")
 
 if __name__ == "__main__":
     create_reviews()

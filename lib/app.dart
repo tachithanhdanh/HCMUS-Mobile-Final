@@ -62,11 +62,7 @@ class MyApp extends StatelessWidget {
         '/search': (context) => PageWithNavBar(child: SearchPage()),
         '/settings': (context) => PageWithNavBar(child: SettingsPage()),
         '/trending': (context) => PageWithNavBar(
-              child: TrendingPage(
-                currentUser: mockUsers[0],
-                trendingRecipes: mockRecipes,
-                authors: mockUsers,
-              ),
+              child: TrendingPage(),
             ),
         '/notifications': (context) =>
             PageWithNavBar(child: NotificationsPage()),
