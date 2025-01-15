@@ -137,6 +137,55 @@ class UserService {
     }
   }
 
+  // Lấy toàn bộ thông tin tất cả người dùng trên Firestore
+  Future<List<UserProfile>> fetchAllUsers() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+
+      return snapshot.docs
+          .map((doc) => UserProfile.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch all users: ${e.toString()}');
+    }
+  }
+
+  // Lấy thông tin người dùng với id
+  Future<UserProfile?> fetchUserById(String userId) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (!userDoc.exists) {
+        return null;
+      }
+
+      return UserProfile.fromMap(userDoc.data() as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to fetch user by ID: ${e.toString()}');
+    }
+  }
+
+  // Lấy danh sách tác giả dựa trên danh sách userId
+  Future<List<UserProfile>> fetchAuthorsByUserIds(List<String> userIds) async {
+    try {
+      if (userIds.isEmpty) {
+        return [];
+      }
+
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: userIds)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => UserProfile.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to fetch authors: ${e.toString()}');
+    }
+  }
+
   // Kiểm tra trạng thái đăng nhập
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 }

@@ -51,11 +51,7 @@ class MyApp extends StatelessWidget {
               child: HomePage(),
             ),
         '/community': (context) => PageWithNavBar(
-              child: CommunityPage(
-                currentUser: mockUsers[0],
-                communityRecipes: mockRecipes,
-                authors: mockUsers,
-              ),
+              child: CommunityPage(),
             ),
         '/add_recipe': (context) => PageWithNavBar(child: AddRecipePage()),
         '/categories': (context) => PageWithNavBar(child: CategoriesPage()),

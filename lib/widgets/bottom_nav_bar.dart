@@ -64,11 +64,7 @@ class BottomNavBar extends StatelessWidget {
       case '/home':
         return HomePage();
       case '/community':
-        return CommunityPage(
-          currentUser: mockUsers[0],
-          communityRecipes: mockRecipes,
-          authors: mockUsers,
-        );
+        return CommunityPage();
       case '/add_recipe':
         return AddRecipePage();
       case '/categories':
