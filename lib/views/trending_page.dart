@@ -4,6 +4,7 @@ import 'package:recipe_app/widgets/icon_actions.dart';
 import 'package:recipe_app/widgets/recipe_card.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/user_profile.dart';
+import 'package:recipe_app/widgets/trending_recipe_card.dart';
 
 class TrendingPage extends StatefulWidget {
   final UserProfile currentUser;
@@ -21,7 +22,7 @@ class TrendingPage extends StatefulWidget {
 }
 
 class _TrendingPageState extends State<TrendingPage> {
-  late List<Recipe> filteredRecipes;
+  late List<Recipe> sortedRecipes;
   late UserProfile currentUser;
   late Recipe mostReviewedRecipe;
 
@@ -29,11 +30,13 @@ class _TrendingPageState extends State<TrendingPage> {
   void initState() {
     super.initState();
     currentUser = widget.currentUser;
-    filteredRecipes = [...widget.trendingRecipes];
+
+    // Sắp xếp danh sách công thức theo số lượng đánh giá giảm dần
+    sortedRecipes = [...widget.trendingRecipes]
+      ..sort((a, b) => b.reviews.length.compareTo(a.reviews.length));
 
     // Tìm công thức có nhiều lượt đánh giá nhất
-    mostReviewedRecipe = filteredRecipes
-        .reduce((a, b) => (a.reviews.length > b.reviews.length) ? a : b);
+    mostReviewedRecipe = sortedRecipes.first;
   }
 
   @override
@@ -115,6 +118,39 @@ class _TrendingPageState extends State<TrendingPage> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 16),
+                // List of Recipes Sorted by Reviews
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Danh sách các recipe
+                    ...sortedRecipes.map((recipe) {
+                      // Lấy thông tin tác giả
+                      final author = widget.authors
+                          .firstWhere((user) => user.id == recipe.authorId);
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: TrendingRecipeCard(
+                          recipe: recipe,
+                          isFavorite:
+                              currentUser.favoriteRecipes.contains(recipe.id),
+                          onFavoriteToggle: () {
+                            setState(() {
+                              if (currentUser.favoriteRecipes
+                                  .contains(recipe.id)) {
+                                currentUser.favoriteRecipes.remove(recipe.id);
+                              } else {
+                                currentUser.favoriteRecipes.add(recipe.id);
+                              }
+                            });
+                          },
+                          authorName: author.name,
+                        ),
+                      );
+                    }).toList(),
+                  ],
                 ),
               ],
             ),

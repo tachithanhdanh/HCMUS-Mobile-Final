@@ -19,6 +19,7 @@ class HomeViewModel {
         createdAt: DateTime.now(),
         category: Category.MainCourse,
         cookTime: '30 mins', // Cập nhật cookTime
+        difficulty: Difficulty.Medium,
       ),
     ]; // Placeholder
   }

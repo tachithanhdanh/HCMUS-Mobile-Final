@@ -212,6 +212,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 730)),
     category: Category.MainCourse,
     cookTime: '45 min',
+    difficulty: Difficulty.Medium,
   ),
   Recipe(
     id: 'recipe2',
@@ -226,6 +227,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 11)),
     category: Category.Dessert,
     cookTime: '38 min',
+    difficulty: Difficulty.Hard,
   ),
   Recipe(
     id: 'recipe3',
@@ -239,6 +241,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 30)),
     category: Category.MainCourse,
     cookTime: '50 min',
+    difficulty: Difficulty.Medium,
   ),
   Recipe(
     id: 'recipe4',
@@ -252,6 +255,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 90)),
     category: Category.Breakfast,
     cookTime: '20 min',
+    difficulty: Difficulty.Easy,
   ),
   Recipe(
     id: 'recipe5',
@@ -265,6 +269,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 150)),
     category: Category.MainCourse,
     cookTime: '1 hr',
+    difficulty: Difficulty.Medium,
   ),
   Recipe(
     id: 'recipe6',
@@ -278,6 +283,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 200)),
     category: Category.Dessert,
     cookTime: '1 hr 30 min',
+    difficulty: Difficulty.Hard,
   ),
   Recipe(
     id: 'recipe7',
@@ -291,6 +297,7 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 250)),
     category: Category.Appetizer,
     cookTime: '15 min',
+    difficulty: Difficulty.Easy,
   ),
   Recipe(
     id: 'recipe8',
@@ -304,20 +311,21 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 300)),
     category: Category.MainCourse,
     cookTime: '30 min',
+    difficulty: Difficulty.Medium,
   ),
   Recipe(
-    id: 'recipe9',
-    title: 'Banana Bread',
-    description: 'A moist and flavorful banana bread.',
-    ingredients: ['Bananas', 'Flour', 'Sugar', 'Eggs', 'Butter'],
-    steps: ['Mix ingredients', 'Bake in oven', 'Cool and serve'],
-    imageUrl: '',
-    authorId: 'user4',
-    reviews: [mockReviews[6], mockReviews[16]],
-    createdAt: DateTime.now().subtract(Duration(days: 350)),
-    category: Category.Breakfast,
-    cookTime: '1 hr',
-  ),
+      id: 'recipe9',
+      title: 'Banana Bread',
+      description: 'A moist and flavorful banana bread.',
+      ingredients: ['Bananas', 'Flour', 'Sugar', 'Eggs', 'Butter'],
+      steps: ['Mix ingredients', 'Bake in oven', 'Cool and serve'],
+      imageUrl: '',
+      authorId: 'user4',
+      reviews: [mockReviews[6], mockReviews[16]],
+      createdAt: DateTime.now().subtract(Duration(days: 350)),
+      category: Category.Breakfast,
+      cookTime: '1 hr',
+      difficulty: Difficulty.VeryHard),
   Recipe(
     id: 'recipe10',
     title: 'Tomato Soup',
@@ -330,5 +338,6 @@ List<Recipe> mockRecipes = [
     createdAt: DateTime.now().subtract(Duration(days: 400)),
     category: Category.Soup,
     cookTime: '40 min',
+    difficulty: Difficulty.Medium,
   ),
 ];

@@ -1,7 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:recipe_app/models/review.dart';
-
 import '../enums/category.dart';
+
+enum Difficulty {
+  Easy,
+  Medium,
+  Hard,
+  VeryHard,
+}
 
 class Recipe {
   String id;
@@ -15,6 +21,7 @@ class Recipe {
   DateTime createdAt;
   Category category;
   String cookTime;
+  Difficulty difficulty; // Thêm độ khó
 
   Recipe({
     required this.id,
@@ -28,6 +35,7 @@ class Recipe {
     required this.createdAt,
     required this.category,
     required this.cookTime,
+    required this.difficulty, // Thêm độ khó vào constructor
   });
 
   factory Recipe.fromMap(Map<String, dynamic> data, String id) {
@@ -45,6 +53,10 @@ class Recipe {
           (e) => e.toString() == 'Category.${data['category']}',
           orElse: () => Category.Other),
       cookTime: data['cookTime'] ?? '',
+      difficulty: Difficulty.values.firstWhere(
+          (e) => e.toString() == 'Difficulty.${data['difficulty']}',
+          orElse: () =>
+              Difficulty.Medium), // Mặc định là Medium nếu không tìm thấy
     );
   }
 
@@ -60,6 +72,7 @@ class Recipe {
       'reviews': reviews,
       'category': category.name,
       'cookTime': cookTime,
+      'difficulty': difficulty.name, // Thêm độ khó vào bản đồ
     };
   }
 }

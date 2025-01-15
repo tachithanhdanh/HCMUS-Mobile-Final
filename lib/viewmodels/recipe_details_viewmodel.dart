@@ -17,6 +17,7 @@ class RecipeDetailsViewModel {
       createdAt: DateTime.now(),
       category: Category.MainCourse,
       cookTime: '25 mins', // Cập nhật cookTime
+      difficulty: Difficulty.Medium,
     ); // Placeholder
   }
 
