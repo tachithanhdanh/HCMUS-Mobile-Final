@@ -41,7 +41,6 @@ class Recipe {
   factory Recipe.fromMap(Map<String, dynamic> data, String id) {
     List<Review> parseReviews(dynamic reviewsData) {
       if (reviewsData is List) {
-        print(reviewsData[0]['id']);
         return reviewsData
             .map((review) =>
                 Review.fromMap(review as Map<String, dynamic>, review['id']))

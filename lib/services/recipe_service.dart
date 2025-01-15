@@ -117,7 +117,6 @@ class RecipeService {
       List<Recipe> recipes = snapshot.docs
           .map((doc) {
             try {
-              print('Doc data: ${doc.data()}');
               return Recipe.fromMap(doc.data() as Map<String, dynamic>, doc.id);
             } catch (e) {
               print('Error parsing recipe: $e');

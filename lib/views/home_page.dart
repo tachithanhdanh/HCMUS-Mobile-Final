@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           await _recipeService.fetchRecipesByUserId(currentUser!.id);
 
       // Lọc danh sách công thức yêu thích
-      final favorites = allRecipes.where((recipe) {
+      final favorites = _allRecipes.where((recipe) {
         return currentUser!.favoriteRecipes.contains(recipe.id);
       }).toList();
 
@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> {
         favoriteRecipes = allRecipes
             .where((recipe) => updatedUser.favoriteRecipes.contains(recipe.id))
             .toList();
+        currentUser = updatedUser;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
