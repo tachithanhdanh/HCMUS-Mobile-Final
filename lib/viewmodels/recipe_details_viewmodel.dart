@@ -11,12 +11,13 @@ class RecipeDetailsViewModel {
       description: 'This is a sample recipe.',
       ingredients: ['Ingredient 1', 'Ingredient 2'],
       steps: ['Step 1', 'Step 2'],
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl: '',
       authorId: 'author123',
       reviews: [],
       createdAt: DateTime.now(),
       category: Category.MainCourse,
       cookTime: '25 mins', // Cập nhật cookTime
+      difficulty: Difficulty.Medium,
     ); // Placeholder
   }
 

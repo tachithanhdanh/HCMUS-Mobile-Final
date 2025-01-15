@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../models/recipe.dart';
-import '../../models/user_profile.dart';
-import '../../constants/colors.dart'; // Import AppColors
+import '../models/recipe.dart';
+import '../models/user_profile.dart';
+import '../constants/colors.dart'; // Import AppColors
 
 class CommunityRecipeCard extends StatelessWidget {
   final Recipe recipe;
@@ -34,7 +34,7 @@ class CommunityRecipeCard extends StatelessWidget {
                 CircleAvatar(
                   backgroundImage: author.avatarUrl.isNotEmpty
                       ? NetworkImage(author.avatarUrl)
-                      : AssetImage('images/gojo_satoru.png') as ImageProvider,
+                      : AssetImage('assets/images/gojo_satoru.png'),
                   radius: 20.0,
                 ),
                 SizedBox(width: 8.0),
@@ -74,7 +74,7 @@ class CommunityRecipeCard extends StatelessWidget {
                           height: 180.0,
                         )
                       : Image.asset(
-                          'images/pochita.jpg',
+                          'assets/images/pochita.jpg',
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 180.0,
@@ -203,7 +203,9 @@ class CommunityRecipeCard extends StatelessWidget {
 
   double getAverageRating() {
     if (recipe.reviews.isEmpty) return 0.0;
-    return recipe.reviews.map((e) => e.rating).reduce((a, b) => a + b) /
-        recipe.reviews.length;
+    double average =
+        recipe.reviews.map((e) => e.rating).reduce((a, b) => a + b) /
+            recipe.reviews.length;
+    return double.parse(average.toStringAsFixed(1));
   }
 }

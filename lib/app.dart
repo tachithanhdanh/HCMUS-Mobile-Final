@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recipe_app/models/mock_data.dart';
+import 'package:recipe_app/views/notifications_page.dart';
+import 'package:recipe_app/services/user_service.dart';
+import 'package:recipe_app/views/signup_page.dart';
 import 'views/home_page.dart';
 import 'views/community_page.dart';
 import 'views/add_recipe_page.dart';
@@ -11,10 +15,12 @@ import 'views/search_page.dart';
 import 'views/settings_page.dart';
 import 'views/trending_page.dart';
 import 'constants/colors.dart'; // Import AppColors
-import 'views/widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
+import 'widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final UserService _userService = UserService();
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,26 +30,57 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/home',
-      routes: {
-        '/home': (context) => PageWithNavBar(child: HomePage()),
-        '/community': (context) => PageWithNavBar(
-                child: CommunityPage(
+      home: StreamBuilder<User?>(
+        stream: _userService.authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Nếu đã đăng nhập
+          if (snapshot.hasData) {
+            return PageWithNavBar(
+                child: HomePage(
               currentUser: mockUsers[0],
-              communityRecipes: mockRecipes,
-              authors: mockUsers,
-              onToggleFavorite: (recipe) {
-                // Handle favorite toggle action
-              },
-            )),
+              allRecipes: mockRecipes,
+            ));
+          }
+
+          // Nếu chưa đăng nhập
+          return LoginSignupPage();
+        },
+      ),
+      routes: {
+        '/home': (context) => PageWithNavBar(
+              child: HomePage(
+                currentUser: mockUsers[0],
+                allRecipes: mockRecipes,
+              ),
+            ),
+        '/community': (context) => PageWithNavBar(
+              child: CommunityPage(
+                currentUser: mockUsers[0],
+                communityRecipes: mockRecipes,
+                authors: mockUsers,
+              ),
+            ),
         '/add_recipe': (context) => PageWithNavBar(child: AddRecipePage()),
         '/categories': (context) => PageWithNavBar(child: CategoriesPage()),
         '/profile': (context) => PageWithNavBar(child: ProfilePage()),
         '/onboarding': (context) => OnboardingPage(),
         '/login_signup': (context) => LoginSignupPage(),
+        '/signup': (context) => SignupPage(),
         '/search': (context) => PageWithNavBar(child: SearchPage()),
         '/settings': (context) => PageWithNavBar(child: SettingsPage()),
-        '/trending': (context) => PageWithNavBar(child: TrendingPage()),
+        '/trending': (context) => PageWithNavBar(
+              child: TrendingPage(
+                currentUser: mockUsers[0],
+                trendingRecipes: mockRecipes,
+                authors: mockUsers,
+              ),
+            ),
+        '/notifications': (context) =>
+            PageWithNavBar(child: NotificationsPage()),
       },
     );
   }
@@ -52,7 +89,7 @@ class MyApp extends StatelessWidget {
 class PageWithNavBar extends StatelessWidget {
   final Widget child;
 
-  PageWithNavBar({required this.child, super.key});
+  const PageWithNavBar({required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {

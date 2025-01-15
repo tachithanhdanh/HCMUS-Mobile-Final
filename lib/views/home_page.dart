@@ -1,146 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/constants/colors.dart';
-import 'package:recipe_app/enums/category.dart';
 import 'package:recipe_app/models/recipe.dart';
-import 'package:recipe_app/models/review.dart';
 import 'package:recipe_app/models/user_profile.dart';
-import 'package:recipe_app/views/widgets/recipe_card.dart';
-import 'package:recipe_app/views/widgets/search_popup.dart';
+import 'package:recipe_app/widgets/icon_actions.dart';
+import 'package:recipe_app/widgets/recipe_card.dart';
 
 class HomePage extends StatefulWidget {
+  final UserProfile currentUser;
+  final List<Recipe> allRecipes;
+
+  HomePage({
+    required this.currentUser,
+    required this.allRecipes,
+  });
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  // Mock data for the current user
-  final UserProfile currentUser = UserProfile(
-    id: '3',
-    name: 'Dianne',
-    email: 'dianne@example.com',
-    avatarUrl: '', // Có thể thêm ảnh profile nếu cần
-    favoriteRecipes: ['1', '2', '3'],
-  );
+  late UserProfile currentUser;
+  late List<Recipe> trendingRecipes;
+  late List<Recipe> yourRecipes;
+  late List<Recipe> favoriteRecipes;
 
-  // Mock data for Recipes
-  final trendingRecipes = [
-    Recipe(
-      id: '1',
-      title: 'Pasta Carbonara',
-      description: 'A simple pasta dish',
-      ingredients: ['Pasta', 'Eggs', 'Cheese', 'Bacon'],
-      steps: ['Boil pasta', 'Cook bacon', 'Mix ingredients'],
-      imageUrl: '',
-      authorId: '1',
-      reviews: [
-        Review(
-            id: 'r1',
-            userId: 'u1',
-            content: 'Great recipe',
-            rating: 5,
-            createdAt: DateTime.now()),
-        Review(
-            id: 'r2',
-            userId: 'u2',
-            content: 'Good taste',
-            rating: 4,
-            createdAt: DateTime.now()),
-        Review(
-            id: 'r3',
-            userId: 'u3',
-            content: 'Could be better',
-            rating: 4,
-            createdAt: DateTime.now()),
-      ],
-      createdAt: DateTime.now(),
-      category: Category.MainCourse,
-      cookTime: '30 mins',
-    )
-  ];
+  @override
+  void initState() {
+    super.initState();
+    currentUser = widget.currentUser;
 
-  // Mock data for Your Recipes
-  final yourRecipes = [
-    Recipe(
-      id: '2',
-      title: 'Margherita Pizza',
-      description: 'Classic Italian pizza with fresh ingredients.',
-      ingredients: ['Flour', 'Tomatoes', 'Cheese', 'Basil'],
-      steps: ['Prepare dough', 'Add toppings', 'Bake in oven'],
-      imageUrl: '',
-      authorId: '1',
-      reviews: [
-        Review(
-            id: 'r4',
-            userId: 'u4',
-            content: 'Loved it!',
-            rating: 5,
-            createdAt: DateTime.now()),
-        Review(
-            id: 'r5',
-            userId: 'u5',
-            content: 'Good but needs more cheese.',
-            rating: 4,
-            createdAt: DateTime.now()),
-      ],
-      createdAt: DateTime.now(),
-      category: Category.MainCourse,
-      cookTime: '45 mins',
-    ),
-    Recipe(
-      id: '3',
-      title: 'Caesar Salad',
-      description: 'Healthy salad with a creamy dressing.',
-      ingredients: ['Lettuce', 'Croutons', 'Parmesan', 'Caesar dressing'],
-      steps: ['Chop lettuce', 'Prepare dressing', 'Mix and serve'],
-      imageUrl: '',
-      authorId: '1',
-      reviews: [
-        Review(
-            id: 'r6',
-            userId: 'u6',
-            content: 'Very refreshing!',
-            rating: 5,
-            createdAt: DateTime.now()),
-        Review(
-            id: 'r7',
-            userId: 'u7',
-            content: 'Too much dressing for me.',
-            rating: 3,
-            createdAt: DateTime.now()),
-      ],
-      createdAt: DateTime.now(),
-      category: Category.Appetizer,
-      cookTime: '15 mins',
-    ),
-    Recipe(
-      id: '4',
-      title: 'Beef Stroganoff',
-      description: 'Creamy Russian dish with tender beef.',
-      ingredients: ['Beef', 'Mushrooms', 'Cream', 'Onion'],
-      steps: ['Cook beef', 'Prepare sauce', 'Mix together and serve'],
-      imageUrl: '',
-      authorId: '1',
-      reviews: [
-        Review(
-            id: 'r8',
-            userId: 'u8',
-            content: 'Fantastic dish!',
-            rating: 5,
-            createdAt: DateTime.now()),
-        Review(
-            id: 'r9',
-            userId: 'u9',
-            content: 'Could use more seasoning.',
-            rating: 4,
-            createdAt: DateTime.now()),
-      ],
-      createdAt: DateTime.now(),
-      category: Category.MainCourse,
-      cookTime: '36 mins',
-    ),
-  ];
+    // Lọc danh sách công thức dựa trên tiêu chí
+    trendingRecipes =
+        widget.allRecipes; // Có thể thêm logic lọc công thức thịnh hành
+    yourRecipes = widget.allRecipes
+        .where((recipe) => recipe.authorId == currentUser.id)
+        .toList();
+    favoriteRecipes = widget.allRecipes
+        .where((recipe) => currentUser.favoriteRecipes.contains(recipe.id))
+        .toList();
+  }
 
-  // Toggle favorite status
   void _toggleFavorite(String recipeId) {
     setState(() {
       if (currentUser.favoriteRecipes.contains(recipeId)) {
@@ -148,18 +47,11 @@ class _HomePageState extends State<HomePage> {
       } else {
         currentUser.favoriteRecipes.add(recipeId);
       }
+      // Cập nhật danh sách yêu thích sau khi thay đổi
+      favoriteRecipes = widget.allRecipes
+          .where((recipe) => currentUser.favoriteRecipes.contains(recipe.id))
+          .toList();
     });
-  }
-
-  // Get favorite recipes
-  List<Recipe> get favoriteRecipes {
-    // Hợp nhất cả trendingRecipes và yourRecipes
-    final allRecipes = [...trendingRecipes, ...yourRecipes];
-
-    // Lọc các recipes có id nằm trong favoriteRecipes của user
-    return allRecipes
-        .where((recipe) => currentUser.favoriteRecipes.contains(recipe.id))
-        .toList();
   }
 
   @override
@@ -196,73 +88,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             // Icon Actions
-                            Row(
-                              children: [
-                                // Nút Search
-                                Container(
-                                  width: 36, // Chiều rộng của hình tròn
-                                  height: 36, // Chiều cao của hình tròn
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle, // Hình tròn
-                                    color: AppColors.pink, // Màu nền
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SearchPopup(
-                                            recommendedRecipes: [
-                                              ...trendingRecipes,
-                                              ...yourRecipes
-                                            ], // Kết hợp danh sách
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.search,
-                                        color: AppColors.pinkSubColor),
-                                    iconSize: 20, // Kích thước biểu tượng
-                                  ),
-                                ),
-                                const SizedBox(
-                                    width: 8), // Khoảng cách giữa các nút
-                                // Nút Notifications
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.pink,
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      // Xử lý sự kiện thông báo
-                                    },
-                                    icon: Icon(Icons.notifications_none,
-                                        color: AppColors.pinkSubColor),
-                                    iconSize: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                // Nút Account
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.pink,
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      // Xử lý sự kiện tài khoản
-                                    },
-                                    icon: Icon(Icons.account_circle,
-                                        color: AppColors.pinkSubColor),
-                                    iconSize: 20,
-                                  ),
-                                ),
-                              ],
+                            IconActions(
+                              recipes: [...trendingRecipes, ...yourRecipes],
                             ),
                           ],
                         ),
@@ -276,13 +103,44 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // Trending Recipe Section
-                  Text(
-                    "Trending Recipe",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.redPinkMain,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Tiêu đề
+                      Text(
+                        "Trending Recipe",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.redPinkMain,
+                        ),
+                      ),
+                      // Dòng chữ "View More" với biểu tượng
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushNamed('/trending');
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              "View More",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.redPinkMain,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                                width: 4), // Khoảng cách giữa chữ và biểu tượng
+                            Icon(
+                              Icons.arrow_forward, // Biểu tượng mũi tên
+                              size: 16,
+                              color: AppColors.redPinkMain,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   _buildTrendingRecipes(trendingRecipes),
@@ -352,14 +210,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTrendingRecipes(List<Recipe> recipes) {
-    return Column(
-      children: recipes.map((recipe) {
-        return RecipeCard(
-          recipe: recipe,
-          isFavorite: currentUser.favoriteRecipes.contains(recipe.id),
-          onFavoriteToggle: () => _toggleFavorite(recipe.id),
-        );
-      }).toList(),
+    // Tìm công thức có nhiều lượt đánh giá nhất
+    final mostReviewedRecipe =
+        recipes.reduce((a, b) => (a.reviews.length > b.reviews.length) ? a : b);
+
+    return RecipeCard(
+      recipe: mostReviewedRecipe,
+      isFavorite: currentUser.favoriteRecipes.contains(mostReviewedRecipe.id),
+      onFavoriteToggle: () => _toggleFavorite(mostReviewedRecipe.id),
     );
   }
 

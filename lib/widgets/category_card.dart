@@ -1,6 +1,6 @@
 // views/widgets/category_card.dart
 import 'package:flutter/material.dart';
-import '../../enums/category.dart'; // Import enum Category
+import '../enums/category.dart'; // Import enum Category
 
 class CategoryCard extends StatelessWidget {
   final Category category;

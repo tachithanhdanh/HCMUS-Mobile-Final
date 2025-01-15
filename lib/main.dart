@@ -38,5 +38,5 @@ void main() async {
   // print("  Storage Bucket: ${app.options.storageBucket}");
   // print("  Measurement ID: ${app.options.measurementId}");
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }

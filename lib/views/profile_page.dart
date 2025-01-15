@@ -51,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: CircleAvatar(
                       backgroundImage: user.avatarUrl.isNotEmpty
                           ? NetworkImage(user.avatarUrl)
-                          : AssetImage('assets/images/default_avatar.png')
+                          : AssetImage('assets/images/gojo_satoru.png')
                               as ImageProvider,
                       radius: 50,
                     ),

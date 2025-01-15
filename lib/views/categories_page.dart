@@ -1,7 +1,7 @@
 // views/categories_page.dart
 import 'package:flutter/material.dart';
 import 'package:recipe_app/enums/category.dart'; // Import enum Category
-import 'package:recipe_app/views/widgets/category_card.dart';
+import 'package:recipe_app/widgets/category_card.dart';
 
 class CategoriesPage extends StatelessWidget {
   final List<Category> _categories = Category.values; // Sử dụng enum
