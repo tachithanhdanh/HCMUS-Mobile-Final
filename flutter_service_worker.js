@@ -4,7 +4,7 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
 const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
-"main.dart.js": "0b5e83c069614318cdf5c2b0981a6d2b",
+"main.dart.js": "000be930a472ba7e673cf70025190077",
 "assets/FontManifest.json": "1b1e7812d9eb9f666db8444d7dde1b20",
 "assets/AssetManifest.bin": "4b79d1a61b78f0ba558537ab04c3217c",
 "assets/fonts/MaterialIcons-Regular.otf": "ed328b63ea45b682e214a80c89d1333a",
@@ -12,7 +12,7 @@ const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "e986ebe42ef785b27164c36a9abc7818",
 "assets/assets/images/gojo_satoru.png": "a5f3644943bef1871dbd4e06a0ec6203",
 "assets/assets/images/pochita.jpg": "02d12e67fc3c827ca4a54a7b722b6399",
-"assets/NOTICES": "6d725a2630b55d180a0cbb59cf0d1982",
+"assets/NOTICES": "8aa45fa16696c51f17a20ef22acd8448",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
 "assets/AssetManifest.json": "fbda49e57536668b513f429603839e05",
 "assets/AssetManifest.bin.json": "6765087eedd50efa195d9708e923233f",
@@ -35,7 +35,7 @@ const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "version.json": "576b29847b370372d82ce919c7c15dce",
-"flutter_bootstrap.js": "1b80189af5869a7e67a9ce5fd4150274"};
+"flutter_bootstrap.js": "7a6399d59091dae73bce90b9f7ae4315"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
