@@ -8,7 +8,7 @@ class ProfileViewModel {
       id: userId,
       name: 'John Doe',
       email: 'johndoe@example.com',
-      avatarUrl: 'https://via.placeholder.com/150',
+      avatarUrl: '',
       favoriteRecipes: ['recipe1', 'recipe2'],
     ); // Placeholder
   }

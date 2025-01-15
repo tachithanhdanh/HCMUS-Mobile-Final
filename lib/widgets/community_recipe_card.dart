@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../models/recipe.dart';
-import '../../models/user_profile.dart';
-import '../../constants/colors.dart'; // Import AppColors
+import '../models/recipe.dart';
+import '../models/user_profile.dart';
+import '../constants/colors.dart'; // Import AppColors
 
 class CommunityRecipeCard extends StatelessWidget {
   final Recipe recipe;

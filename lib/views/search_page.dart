@@ -1,7 +1,7 @@
 // views/search_page.dart
 import 'package:flutter/material.dart';
 import 'package:recipe_app/models/recipe.dart';
-import 'package:recipe_app/views/widgets/recipe_card.dart';
+import 'package:recipe_app/widgets/recipe_card.dart';
 import '../viewmodels/search_viewmodel.dart';
 import 'recipe_details_page.dart';
 

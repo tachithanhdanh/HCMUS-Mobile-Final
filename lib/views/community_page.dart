@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/views/widgets/community_recipe_card.dart';
+import 'package:recipe_app/widgets/community_recipe_card.dart';
 import '../../models/recipe.dart';
 import '../../models/user_profile.dart';
 import '../../constants/colors.dart';

@@ -4,8 +4,8 @@ import 'package:recipe_app/enums/category.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/review.dart';
 import 'package:recipe_app/models/user_profile.dart';
-import 'package:recipe_app/views/widgets/recipe_card.dart';
-import 'package:recipe_app/views/widgets/search_popup.dart';
+import 'package:recipe_app/widgets/recipe_card.dart';
+import 'package:recipe_app/widgets/search_popup.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -238,6 +238,8 @@ class _HomePageState extends State<HomePage> {
                                   child: IconButton(
                                     onPressed: () {
                                       // Xử lý sự kiện thông báo
+                                      Navigator.of(context)
+                                          .pushNamed('/notifications');
                                     },
                                     icon: Icon(Icons.notifications_none,
                                         color: AppColors.pinkSubColor),
@@ -256,6 +258,8 @@ class _HomePageState extends State<HomePage> {
                                   child: IconButton(
                                     onPressed: () {
                                       // Xử lý sự kiện tài khoản
+                                      Navigator.of(context)
+                                          .pushNamed('/profile');
                                     },
                                     icon: Icon(Icons.account_circle,
                                         color: AppColors.pinkSubColor),

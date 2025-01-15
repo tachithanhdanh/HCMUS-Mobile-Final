@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/models/mock_data.dart';
+import 'package:recipe_app/views/notifications_page.dart';
 import 'views/home_page.dart';
 import 'views/community_page.dart';
 import 'views/add_recipe_page.dart';
@@ -11,7 +12,7 @@ import 'views/search_page.dart';
 import 'views/settings_page.dart';
 import 'views/trending_page.dart';
 import 'constants/colors.dart'; // Import AppColors
-import 'views/widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
+import 'widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -41,6 +42,8 @@ class MyApp extends StatelessWidget {
         '/search': (context) => PageWithNavBar(child: SearchPage()),
         '/settings': (context) => PageWithNavBar(child: SettingsPage()),
         '/trending': (context) => PageWithNavBar(child: TrendingPage()),
+        '/notifications': (context) =>
+            PageWithNavBar(child: NotificationsPage()),
       },
     );
   }
