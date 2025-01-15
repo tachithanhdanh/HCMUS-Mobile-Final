@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/constants/colors.dart';
+import 'package:recipe_app/widgets/icon_actions.dart';
 
 class TrendingPage extends StatelessWidget {
   @override
@@ -33,16 +34,8 @@ class TrendingPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      children: [
-                        _buildIconButton(context, Icons.search, () {}),
-                        const SizedBox(width: 8),
-                        _buildIconButton(
-                            context, Icons.notifications_none, () {}),
-                        const SizedBox(width: 8),
-                        _buildIconButton(context, Icons.account_circle, () {}),
-                      ],
-                    ),
+                    // Custom Icon Actions
+                    IconActions(recipes: []),
                   ],
                 ),
                 const SizedBox(height: 16),

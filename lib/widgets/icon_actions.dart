@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_app/models/recipe.dart';
 import '../constants/colors.dart';
 import 'search_popup.dart'; // Đảm bảo file SearchPopup đã được import
 
 class IconActions extends StatelessWidget {
-  final List<dynamic> trendingRecipes;
-  final List<dynamic> yourRecipes;
+  final List<Recipe> recipes;
 
   const IconActions({
     Key? key,
-    required this.trendingRecipes,
-    required this.yourRecipes,
+    required this.recipes,
   }) : super(key: key);
 
   void _showSearchDialog(BuildContext context) {
@@ -18,8 +17,7 @@ class IconActions extends StatelessWidget {
       builder: (BuildContext context) {
         return SearchPopup(
           recommendedRecipes: [
-            ...trendingRecipes,
-            ...yourRecipes,
+            ...recipes,
           ],
         );
       },

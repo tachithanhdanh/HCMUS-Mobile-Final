@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/widgets/community_recipe_card.dart';
+import 'package:recipe_app/widgets/icon_actions.dart';
 import '../../models/recipe.dart';
 import '../../models/user_profile.dart';
 import '../../constants/colors.dart';
@@ -92,17 +93,8 @@ class _CommunityPageState extends State<CommunityPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Row(
-                        children: [
-                          _buildIconButton(context, Icons.search, () {}),
-                          const SizedBox(width: 8),
-                          _buildIconButton(
-                              context, Icons.notifications_none, () {}),
-                          const SizedBox(width: 8),
-                          _buildIconButton(
-                              context, Icons.account_circle, () {}),
-                        ],
-                      ),
+                      // Custom Icon Actions
+                      IconActions(recipes: filteredRecipes),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -167,23 +159,6 @@ class _CommunityPageState extends State<CommunityPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildIconButton(
-      BuildContext context, IconData icon, VoidCallback onPressed) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.pink,
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, color: AppColors.pinkSubColor),
-        iconSize: 20,
       ),
     );
   }

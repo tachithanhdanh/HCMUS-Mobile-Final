@@ -4,6 +4,7 @@ import 'package:recipe_app/enums/category.dart';
 import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/review.dart';
 import 'package:recipe_app/models/user_profile.dart';
+import 'package:recipe_app/widgets/icon_actions.dart';
 import 'package:recipe_app/widgets/recipe_card.dart';
 import 'package:recipe_app/widgets/search_popup.dart';
 
@@ -196,77 +197,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             // Icon Actions
-                            Row(
-                              children: [
-                                // Nút Search
-                                Container(
-                                  width: 36, // Chiều rộng của hình tròn
-                                  height: 36, // Chiều cao của hình tròn
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle, // Hình tròn
-                                    color: AppColors.pink, // Màu nền
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SearchPopup(
-                                            recommendedRecipes: [
-                                              ...trendingRecipes,
-                                              ...yourRecipes
-                                            ], // Kết hợp danh sách
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.search,
-                                        color: AppColors.pinkSubColor),
-                                    iconSize: 20, // Kích thước biểu tượng
-                                  ),
-                                ),
-                                const SizedBox(
-                                    width: 8), // Khoảng cách giữa các nút
-                                // Nút Notifications
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.pink,
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      // Xử lý sự kiện thông báo
-                                      Navigator.of(context)
-                                          .pushNamed('/notifications');
-                                    },
-                                    icon: Icon(Icons.notifications_none,
-                                        color: AppColors.pinkSubColor),
-                                    iconSize: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                // Nút Account
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.pink,
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      // Xử lý sự kiện tài khoản
-                                      Navigator.of(context)
-                                          .pushNamed('/profile');
-                                    },
-                                    icon: Icon(Icons.account_circle,
-                                        color: AppColors.pinkSubColor),
-                                    iconSize: 20,
-                                  ),
-                                ),
-                              ],
+                            IconActions(
+                              recipes: [...trendingRecipes, ...yourRecipes],
                             ),
                           ],
                         ),
