@@ -1,9 +1,11 @@
+from datetime import datetime
 import random
 from firebase_admin import credentials, firestore, initialize_app
 
 # Khởi tạo Firebase Admin SDK
 cred = credentials.Certificate("../firebase-adminsdk-key.json")
 initialize_app(cred)
+
 
 def create_reviews():
     db = firestore.client()
@@ -72,20 +74,20 @@ def create_reviews():
         rating = random.choices([1, 2, 3, 4, 5], weights=[1, 2, 3, 3, 1])[0]
         content = random.choice(review_texts[rating])
 
-        # Tạo review trong collection "reviews"
+        # Tạo dữ liệu review
         review_data = {
+            "id": db.collection("recipes").document().id,  # Tạo ID ngẫu nhiên
             "userId": reviewer_id,
             "content": content,
             "rating": rating,
-            "recipeId": recipe_id,
-            "createdAt": firestore.SERVER_TIMESTAMP,
+            "createdAt": datetime.utcnow().isoformat(),  # Lấy thời gian hiện tại
         }
-        review_ref = db.collection("reviews").add(review_data)
-        review_id = review_ref[1].id  # Lấy ID của review mới tạo
 
-        # Cập nhật trường "reviews" của recipe với ID review
+        # Lấy danh sách review hiện tại và thêm review mới
         recipe_reviews = recipe_data.get("reviews", [])
-        recipe_reviews.append(review_id)
+        recipe_reviews.append(review_data)
+
+        # Cập nhật lại trường reviews trong recipe
         db.collection("recipes").document(recipe_id).update({"reviews": recipe_reviews})
 
         print(f"Added review for recipe {recipe_data['title']} by user {reviewer_id} with rating {rating}")

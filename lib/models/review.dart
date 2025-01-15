@@ -14,7 +14,6 @@ class Review {
     required this.rating,
     required this.createdAt,
   }) {
-    // Validation
     if (rating < 1 || rating > 5) {
       throw ArgumentError('Rating must be between 1 and 5');
     }
@@ -24,21 +23,20 @@ class Review {
   }
 
   factory Review.fromMap(Map<String, dynamic> data, String id) {
-    // Xử lý createdAt có thể là Timestamp hoặc DateTime
     DateTime getDateTime(dynamic date) {
       if (date is Timestamp) {
         return date.toDate();
       } else if (date is DateTime) {
         return date;
       }
-      return DateTime.now(); // Fallback nếu không có createdAt
+      return DateTime.now();
     }
 
     return Review(
       id: id,
       userId: data['userId'] as String,
-      content: data['content'] as String,
-      rating: data['rating'] as int,
+      content: data['content'] ?? '',
+      rating: data['rating'] ?? 0,
       createdAt: getDateTime(data['createdAt']),
     );
   }
@@ -52,7 +50,6 @@ class Review {
     };
   }
 
-  // Tạo bản copy với các thay đổi
   Review copyWith({
     String? userId,
     String? content,
@@ -60,7 +57,7 @@ class Review {
     DateTime? createdAt,
   }) {
     return Review(
-      id: this.id,
+      id: id,
       userId: userId ?? this.userId,
       content: content ?? this.content,
       rating: rating ?? this.rating,
@@ -68,7 +65,6 @@ class Review {
     );
   }
 
-  // So sánh hai review
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

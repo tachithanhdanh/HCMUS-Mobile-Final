@@ -39,11 +39,7 @@ class MyApp extends StatelessWidget {
 
           // Nếu đã đăng nhập
           if (snapshot.hasData) {
-            return PageWithNavBar(
-                child: HomePage(
-              currentUser: mockUsers[0],
-              allRecipes: mockRecipes,
-            ));
+            return PageWithNavBar(child: HomePage());
           }
 
           // Nếu chưa đăng nhập
@@ -52,10 +48,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/home': (context) => PageWithNavBar(
-              child: HomePage(
-                currentUser: mockUsers[0],
-                allRecipes: mockRecipes,
-              ),
+              child: HomePage(),
             ),
         '/community': (context) => PageWithNavBar(
               child: CommunityPage(
