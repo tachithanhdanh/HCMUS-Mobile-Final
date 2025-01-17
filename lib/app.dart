@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recipe_app/models/mock_data.dart';
 import 'package:recipe_app/views/notifications_page.dart';
 import 'package:recipe_app/services/user_service.dart';
+import 'package:recipe_app/views/recipe_details_page.dart';
 import 'package:recipe_app/views/signup_page.dart';
 import 'views/home_page.dart';
 import 'views/community_page.dart';
@@ -66,6 +67,8 @@ class MyApp extends StatelessWidget {
             ),
         '/notifications': (context) =>
             PageWithNavBar(child: NotificationsPage()),
+        '/recipe_details': (context) =>
+            PageWithNavBar(child: RecipeDetailsPage()),
       },
     );
   }

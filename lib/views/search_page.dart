@@ -54,9 +54,8 @@ class _SearchPageState extends State<SearchPage> {
                 return GestureDetector(
                   onTap: () => _selectRecipe(recipe.id),
                   child: RecipeCard(
-                      recipe: recipe,
-                      isFavorite: false,
-                      onFavoriteToggle: () {}),
+                    recipe: recipe,
+                  ),
                 );
               },
             ),
