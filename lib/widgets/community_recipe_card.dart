@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_app/widgets/favorite_button.dart';
 import '../models/recipe.dart';
 import '../models/user_profile.dart';
 import '../constants/colors.dart'; // Import AppColors
@@ -86,18 +87,12 @@ class CommunityRecipeCard extends StatelessWidget {
                   child: GestureDetector(
                     onTap: onFavoriteToggle, // Toggle favorite state
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      padding: EdgeInsets.all(6.0),
-                      child: Icon(
-                        isFavorite
-                            ? Icons.favorite // Filled heart
-                            : Icons.favorite_border, // Outlined heart
-                        color: AppColors.pinkSubColor,
-                      ),
-                    ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: EdgeInsets.all(6.0),
+                        child: FavoriteButton(recipeId: recipe.id)),
                   ),
                 ),
               ],

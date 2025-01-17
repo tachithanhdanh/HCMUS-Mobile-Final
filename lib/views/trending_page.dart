@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_app/constants/colors.dart';
+import 'package:recipe_app/views/recipe_details_page.dart';
 import 'package:recipe_app/widgets/icon_actions.dart';
 import 'package:recipe_app/widgets/recipe_card.dart';
 import 'package:recipe_app/models/recipe.dart';
@@ -133,22 +134,6 @@ class _TrendingPageState extends State<TrendingPage> {
                       const SizedBox(height: 16),
                       RecipeCard(
                         recipe: mostReviewedRecipe!,
-                        isFavorite: currentUser?.favoriteRecipes
-                                .contains(mostReviewedRecipe!.id) ??
-                            false,
-                        onFavoriteToggle: () {
-                          setState(() {
-                            if (currentUser?.favoriteRecipes
-                                    .contains(mostReviewedRecipe!.id) ??
-                                false) {
-                              currentUser?.favoriteRecipes
-                                  .remove(mostReviewedRecipe!.id);
-                            } else {
-                              currentUser?.favoriteRecipes
-                                  .add(mostReviewedRecipe!.id);
-                            }
-                          });
-                        },
                       ),
                     ],
                   ),
@@ -189,6 +174,14 @@ class _TrendingPageState extends State<TrendingPage> {
                             });
                           },
                           authorName: author.name,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => RecipeDetailsPage(),
+                                settings: RouteSettings(arguments: recipe.id),
+                              ),
+                            );
+                          },
                         ),
                       );
                     }).toList(),

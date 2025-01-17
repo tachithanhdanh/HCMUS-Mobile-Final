@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/recipe.dart';
 import '../constants/colors.dart'; // Import AppColors
+import '../widgets/favorite_button.dart'; // Import FavoriteButton
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;
-  final bool isFavorite;
-  final VoidCallback onFavoriteToggle;
+  final VoidCallback? onRecipeUpdated; // Callback tùy chọn
 
   RecipeCard({
     required this.recipe,
-    required this.isFavorite,
-    required this.onFavoriteToggle,
+    this.onRecipeUpdated,
   });
 
   // Hàm tính trung bình số sao phần nguyên từ danh sách reviews
@@ -19,8 +18,7 @@ class RecipeCard extends StatelessWidget {
     int totalRatings = recipe.reviews
         .map((review) => review.rating) // Lấy danh sách ratings
         .reduce((a, b) => a + b); // Tính tổng
-    double average = totalRatings.toDouble() /
-        recipe.reviews.length; // Chuyển đổi totalRatings thành double
+    double average = totalRatings.toDouble() / recipe.reviews.length;
     return double.parse(average.toStringAsFixed(1)); // Lấy phần nguyên
   }
 
@@ -41,6 +39,7 @@ class RecipeCard extends StatelessWidget {
             children: [
               Stack(
                 children: [
+                  // Hình ảnh công thức
                   ClipRRect(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(12.0)),
@@ -58,24 +57,13 @@ class RecipeCard extends StatelessWidget {
                             width: double.infinity,
                           ),
                   ),
+                  // Nút FavoriteButton
                   Positioned(
                     top: 8.0,
                     right: 8.0,
-                    child: GestureDetector(
-                      onTap: onFavoriteToggle, // Toggle favorite state
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        padding: EdgeInsets.all(6.0),
-                        child: Icon(
-                          isFavorite
-                              ? Icons.favorite // Filled heart
-                              : Icons.favorite_border, // Outlined heart
-                          color: AppColors.pinkSubColor,
-                        ),
-                      ),
+                    child: FavoriteButton(
+                      recipeId: recipe.id, // Truyền ID của công thức
+                      onRecipeUpdated: onRecipeUpdated, // Truyền callback
                     ),
                   ),
                 ],
