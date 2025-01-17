@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserProfile? currentUser;
+  List<String> currentRecipes = [];
   Recipe? trendingRecipe;
   List<Recipe> yourRecipes = [];
   List<Recipe> favoriteRecipes = [];
@@ -63,6 +64,8 @@ class _HomePageState extends State<HomePage> {
       final userRecipes =
           await _recipeService.fetchRecipesByUserId(currentUser!.id);
 
+      final current = currentUser!.favoriteRecipes;
+
       // Lọc danh sách công thức yêu thích
       final favorites = _allRecipes.where((recipe) {
         return currentUser!.favoriteRecipes.contains(recipe.id);
@@ -73,44 +76,22 @@ class _HomePageState extends State<HomePage> {
         yourRecipes = userRecipes;
         favoriteRecipes = favorites;
         allRecipes = _allRecipes;
+        currentRecipes = current;
       });
     } catch (e) {
       print("Error loading data: $e");
     }
   }
 
-  void _toggleFavorite(String recipeId) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-    if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No user logged in')),
-      );
-      return;
-    }
-
-    try {
-      // Gọi hàm từ UserService để toggle favorite
-      final updatedUser = await UserService().toggleFavoriteRecipe(
-        currentUser!.id,
-        recipeId,
-      );
-
-      // Cập nhật UserProvider với dữ liệu mới
-      userProvider.setUser(updatedUser);
-
-      // Cập nhật danh sách yêu thích trên UI
-      setState(() {
-        favoriteRecipes = allRecipes
-            .where((recipe) => updatedUser.favoriteRecipes.contains(recipe.id))
-            .toList();
-        currentUser = updatedUser;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update favorites: $e')),
-      );
-    }
+  void updateRecipes() {
+    setState(() {
+      currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      // Cập nhật danh sách yêu thích từ allRecipes
+      favoriteRecipes = allRecipes.where((recipe) {
+        return currentUser?.favoriteRecipes.contains(recipe.id) ?? false;
+      }).toList();
+    });
   }
 
   @override
@@ -211,8 +192,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       // Dòng chữ "View More" với biểu tượng
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pushNamed('/trending');
+                          // Gọi lại _loadData khi quay về HomePage
+                          await _loadData();
                         },
                         child: Row(
                           children: [
@@ -293,7 +276,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 16),
                   // Danh sách Recipes
-                  _buildFavorites(),
+                  _buildFavorites(allRecipes.where((recipe) {
+                    return currentRecipes.contains(recipe.id);
+                  }).toList()),
                 ],
               ),
             ),
@@ -308,8 +293,7 @@ class _HomePageState extends State<HomePage> {
 
     return RecipeCard(
       recipe: mostReviewedRecipe,
-      isFavorite: currentUser!.favoriteRecipes.contains(mostReviewedRecipe.id),
-      onFavoriteToggle: () => _toggleFavorite(mostReviewedRecipe.id),
+      onRecipeUpdated: updateRecipes,
     );
   }
 
@@ -324,8 +308,7 @@ class _HomePageState extends State<HomePage> {
             margin: const EdgeInsets.symmetric(horizontal: 6.0),
             child: RecipeCard(
               recipe: recipe,
-              isFavorite: currentUser!.favoriteRecipes.contains(recipe.id),
-              onFavoriteToggle: () => _toggleFavorite(recipe.id),
+              onRecipeUpdated: updateRecipes,
             ),
           );
         }).toList(),
@@ -333,7 +316,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildFavorites() {
+  Widget _buildFavorites(List<Recipe> favoriteRecipes) {
     final recipes = favoriteRecipes;
     if (recipes.isEmpty) {
       return Text("No favorites yet.");
@@ -348,8 +331,7 @@ class _HomePageState extends State<HomePage> {
             margin: const EdgeInsets.symmetric(horizontal: 6.0),
             child: RecipeCard(
               recipe: recipe,
-              isFavorite: currentUser!.favoriteRecipes.contains(recipe.id),
-              onFavoriteToggle: () => _toggleFavorite(recipe.id),
+              onRecipeUpdated: updateRecipes,
             ),
           );
         }).toList(),
