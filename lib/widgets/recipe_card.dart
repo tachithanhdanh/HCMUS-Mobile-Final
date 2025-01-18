@@ -29,133 +29,71 @@ class RecipeCard extends StatelessWidget {
         // Nếu chiều rộng nhỏ hơn 200, chuyển sang hiển thị 3 dòng
         final isCompact = constraints.maxWidth < 200;
 
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            side: BorderSide(color: AppColors.pinkSubColor, width: 1.5),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  // Hình ảnh công thức
-                  ClipRRect(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(12.0)),
-                    child: recipe.imageUrl.isNotEmpty
-                        ? Image.network(
-                            recipe.imageUrl,
-                            fit: BoxFit.cover,
-                            height: 150,
-                            width: double.infinity,
-                          )
-                        : Image.asset(
-                            'assets/images/pochita.jpg',
-                            fit: BoxFit.cover,
-                            height: 150,
-                            width: double.infinity,
-                          ),
-                  ),
-                  // Nút FavoriteButton
-                  Positioned(
-                    top: 8.0,
-                    right: 8.0,
-                    child: FavoriteButton(
-                      recipeId: recipe.id, // Truyền ID của công thức
-                      onRecipeUpdated: onRecipeUpdated, // Truyền callback
-                    ),
-                  ),
-                ],
+        return InkWell(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/recipe_details',
+                arguments: recipe.id, // Truyền ID recipe
+              );
+            },
+            borderRadius: BorderRadius.circular(
+                12.0), // Để hiệu ứng nhấn theo hình dạng Card
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                side: BorderSide(color: AppColors.pinkSubColor, width: 1.5),
               ),
-              // Nội dung bên dưới
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: isCompact
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            recipe.title,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.brownPod,
-                            ),
-                          ),
-                          const SizedBox(height: 4.0),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time,
-                                size: 16,
-                                color: AppColors.pinkSubColor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      // Hình ảnh công thức
+                      ClipRRect(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(12.0)),
+                        child: recipe.imageUrl.isNotEmpty
+                            ? Image.network(
+                                recipe.imageUrl,
+                                fit: BoxFit.cover,
+                                height: 150,
+                                width: double.infinity,
+                              )
+                            : Image.asset(
+                                'assets/images/pochita.jpg',
+                                fit: BoxFit.cover,
+                                height: 150,
+                                width: double.infinity,
                               ),
-                              const SizedBox(width: 4.0),
+                      ),
+                      // Nút FavoriteButton
+                      Positioned(
+                        top: 8.0,
+                        right: 8.0,
+                        child: FavoriteButton(
+                          recipeId: recipe.id, // Truyền ID của công thức
+                          onRecipeUpdated: onRecipeUpdated, // Truyền callback
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Nội dung bên dưới
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: isCompact
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(
-                                recipe.cookTime,
+                                recipe.title,
                                 style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.pinkSubColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.brownPod,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 4.0),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.star,
-                                size: 16,
-                                color: AppColors.pinkSubColor,
-                              ),
-                              const SizedBox(width: 4.0),
-                              Text(
-                                '${getAverageRating()}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.pinkSubColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Bên trái: Title và Description
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  recipe.title,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.brownPod,
-                                  ),
-                                ),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  recipe.description,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300,
-                                    color: AppColors.brownPod,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Bên phải: Time và Ratings
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
+                              const SizedBox(height: 4.0),
                               Row(
                                 children: [
                                   Icon(
@@ -192,13 +130,85 @@ class RecipeCard extends StatelessWidget {
                                 ],
                               ),
                             ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Bên trái: Title và Description
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      recipe.title,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.brownPod,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4.0),
+                                    Text(
+                                      recipe.description,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                        color: AppColors.brownPod,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Bên phải: Time và Ratings
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 16,
+                                        color: AppColors.pinkSubColor,
+                                      ),
+                                      const SizedBox(width: 4.0),
+                                      Text(
+                                        recipe.cookTime,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.pinkSubColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4.0),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        size: 16,
+                                        color: AppColors.pinkSubColor,
+                                      ),
+                                      const SizedBox(width: 4.0),
+                                      Text(
+                                        '${getAverageRating()}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.pinkSubColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
+            ));
       },
     );
   }

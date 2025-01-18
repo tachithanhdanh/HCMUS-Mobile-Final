@@ -94,24 +94,7 @@ class _CommunityPageState extends State<CommunityPage> {
   }
 
   void _toggleFavorite(String recipeId) async {
-    if (currentUser == null) return;
-
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    try {
-      final updatedUser = await UserService().toggleFavoriteRecipe(
-        currentUser!.id,
-        recipeId,
-      );
-
-      userProvider.setUser(updatedUser);
-      setState(() {
-        currentUser = updatedUser;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to toggle favorite: $e')),
-      );
-    }
+    return;
   }
 
   @override

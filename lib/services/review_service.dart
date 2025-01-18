@@ -7,13 +7,24 @@ class ReviewService {
   // Thêm review vào Recipe
   Future<void> addReview(String recipeId, Review review) async {
     try {
-      DocumentReference recipeDoc =
-          _firestore.collection('recipes').doc(recipeId);
+      final recipeRef = _firestore.collection('recipes').doc(recipeId);
 
-      // Thêm review vào collection reviews của công thức
-      await recipeDoc.collection('reviews').add(review.toMap());
-    } catch (e) {
-      throw Exception('Failed to add review: ${e.toString()}');
+      // Tạo một ID duy nhất cho review
+      final String reviewId = _firestore.collection('dummy').doc().id;
+
+      // Gắn ID vào review trước khi thêm
+      final reviewWithId = review.toMap()..addAll({'id': reviewId});
+
+      // Thêm review mới vào mảng reviews
+      await recipeRef.update({
+        'reviews': FieldValue.arrayUnion([reviewWithId]),
+      });
+
+      // Log để kiểm tra
+      print('Review added successfully: $reviewWithId');
+    } catch (error) {
+      // Log lỗi nếu có
+      print('Failed to add review: $error');
     }
   }
 

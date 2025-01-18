@@ -8,6 +8,7 @@ import 'package:recipe_app/views/signup_page.dart';
 import 'views/home_page.dart';
 import 'views/community_page.dart';
 import 'views/add_recipe_page.dart';
+import 'views/edit_recipe_page.dart';
 import 'views/categories_page.dart';
 import 'views/profile_page.dart';
 import 'views/onboarding_page.dart';
@@ -15,6 +16,8 @@ import 'views/login_signup_page.dart';
 import 'views/search_page.dart';
 import 'views/settings_page.dart';
 import 'views/trending_page.dart';
+import 'views/recipe_reviews.dart';
+import 'views/leave_a_review.dart';
 import 'constants/colors.dart'; // Import AppColors
 import 'widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
 
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Recipe App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -69,6 +73,11 @@ class MyApp extends StatelessWidget {
             PageWithNavBar(child: NotificationsPage()),
         '/recipe_details': (context) =>
             PageWithNavBar(child: RecipeDetailsPage()),
+        '/recipe_reviews': (context) =>
+            PageWithNavBar(child: RecipeReviewsPage()),
+        '/leave_a_review': (context) =>
+            PageWithNavBar(child: LeaveReviewPage()),
+        '/edit_recipe': (context) => PageWithNavBar(child: EditRecipePage()),
       },
     );
   }

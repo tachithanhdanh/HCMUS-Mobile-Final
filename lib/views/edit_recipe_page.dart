@@ -10,12 +10,12 @@ import 'package:recipe_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_app/models/user_profile.dart';
 
-class AddRecipePage extends StatefulWidget {
+class EditRecipePage extends StatefulWidget {
   @override
-  _AddRecipePageState createState() => _AddRecipePageState();
+  _EditRecipePageState createState() => _EditRecipePageState();
 }
 
-class _AddRecipePageState extends State<AddRecipePage> {
+class _EditRecipePageState extends State<EditRecipePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -25,14 +25,10 @@ class _AddRecipePageState extends State<AddRecipePage> {
   final List<String> _ingredients = [];
   late UserProvider userProvider;
   late UserProfile? currentUser;
-
-  @override
-  void initState() {
-    super.initState();
-    userProvider = Provider.of<UserProvider>(context, listen: false);
-    currentUser = userProvider.currentUser;
-  }
-
+  File? _selectedImage;
+  String imageUrl = ''; // Lưu URL ảnh hoặc base64
+  final RecipeService _recipeService = RecipeService();
+  late String recipeId;
   final List<String> categories = [
     'Dessert', // Món tráng miệng
     'MainCourse', // Món chính
@@ -50,17 +46,54 @@ class _AddRecipePageState extends State<AddRecipePage> {
     'Hard',
     'Very Hard',
   ];
+  @override
+  void initState() {
+    super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    currentUser = userProvider.currentUser;
+  }
 
-  File? _selectedImage; // Lưu ảnh được chọn
-  String imageUrl = ''; // Lưu URL ảnh
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Lấy recipeId từ arguments và fetch dữ liệu
+    recipeId = ModalRoute.of(context)!.settings.arguments as String;
+    _fetchRecipeData(recipeId);
+  }
+
+  Future<void> _fetchRecipeData(String recipeId) async {
+    try {
+      final recipe = await _recipeService.fetchRecipeDetails(recipeId);
+
+      setState(() {
+        _titleController.text = recipe.title;
+        _descriptionController.text = recipe.description;
+        _timeController.text = recipe.cookTime;
+        _instructionsController.text = recipe.steps.join('\n');
+        selectedCategory = recipe.category.name;
+        selectedDifficulty = recipe.difficulty.name;
+        imageUrl = recipe.imageUrl;
+
+        // Cập nhật danh sách ingredients
+        _ingredients.clear();
+        _ingredients.addAll(recipe.ingredients);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch recipe data: $e')),
+      );
+    }
+  }
 
   // Hàm thêm nguyên liệu
   void _addIngredient() {
     setState(() {
-      _ingredients.add(""); // Thêm ingredient trống
+      _ingredients.add(""); // Thêm một ingredient trống
     });
   }
 
+  // Hàm xóa nguyên liệu
   void _removeIngredient(int index) {
     setState(() {
       _ingredients.removeAt(index); // Xóa ingredient theo index
@@ -78,8 +111,8 @@ class _AddRecipePageState extends State<AddRecipePage> {
       });
 
       // Chuyển ảnh thành Base64
-      final bytes = await _selectedImage!.readAsBytes(); // Đọc dữ liệu byte
-      final base64Image = base64Encode(bytes); // Mã hóa Base64
+      final bytes = await _selectedImage!.readAsBytes();
+      final base64Image = base64Encode(bytes);
       imageUrl = 'data:image/jpeg;base64,$base64Image';
     }
   }
@@ -89,7 +122,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Create Recipe',
+          'Edit Recipe',
           style: TextStyle(
               color: AppColors.redPinkMain, fontWeight: FontWeight.bold),
         ),
@@ -123,8 +156,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                               title: const Text('Choose from Gallery'),
                               onTap: () {
                                 Navigator.pop(context);
-                                _handleImagePicker(ImageSource
-                                    .gallery); // Chọn ảnh từ thư viện
+                                _handleImagePicker(ImageSource.gallery);
                               },
                             ),
                             ListTile(
@@ -132,8 +164,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                               title: const Text('Take a Photo'),
                               onTap: () {
                                 Navigator.pop(context);
-                                _handleImagePicker(
-                                    ImageSource.camera); // Chụp ảnh từ camera
+                                _handleImagePicker(ImageSource.camera);
                               },
                             ),
                           ],
@@ -149,23 +180,29 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     borderRadius: BorderRadius.circular(16),
                     image: _selectedImage != null
                         ? DecorationImage(
-                            image: FileImage(
-                                _selectedImage!), // Hiển thị ảnh đã chọn
+                            image: FileImage(_selectedImage!),
                             fit: BoxFit.cover,
                           )
-                        : null,
+                        : imageUrl.isNotEmpty
+                            ? DecorationImage(
+                                image: imageUrl.startsWith('data:image/')
+                                    ? MemoryImage(
+                                        base64Decode(imageUrl.split(',').last))
+                                    : NetworkImage(imageUrl) as ImageProvider,
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                   ),
-                  child: _selectedImage == null
+                  child: _selectedImage == null && imageUrl.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
                               Icon(Icons.image,
-                                  color: AppColors.redPinkMain,
-                                  size: 50), // Icon hình ảnh
+                                  color: AppColors.redPinkMain, size: 50),
                               SizedBox(height: 8),
                               Text(
-                                'Tap to add an image', // Nội dung mới
+                                'Tap to edit an image',
                                 style: TextStyle(color: Colors.grey),
                               ),
                             ],
@@ -199,6 +236,33 @@ class _AddRecipePageState extends State<AddRecipePage> {
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 ),
+              ),
+              const SizedBox(height: 16),
+
+              // Description
+              Text(
+                'Description',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  hintText: 'Recipe Description',
+                  filled: true,
+                  fillColor: AppColors.redPinkMain.withOpacity(0.1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                ),
+                maxLines: 3,
               ),
               const SizedBox(height: 16),
 
@@ -403,7 +467,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                         ),
                       );
                     },
-                  ),
+                  ).toList(),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: _addIngredient,
@@ -455,8 +519,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                           _descriptionController.text.isEmpty ||
                           _timeController.text.isEmpty ||
                           _instructionsController.text.isEmpty ||
-                          _ingredients.isEmpty ||
-                          _selectedImage == null) {
+                          _ingredients.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text(
@@ -521,8 +584,36 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     child: const Text('Publish'),
                   ),
                   OutlinedButton(
-                    onPressed: () {
-                      // TODO: Delete logic
+                    onPressed: () async {
+                      try {
+                        await RecipeService().deleteRecipe(recipeId);
+
+                        // Hiển thị thông báo SnackBar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Recipe deleted successfully!',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+
+                        Navigator.pop(context); // Pop màn hình hiện tại
+                        Navigator.pop(context); // Pop màn hình trước đó
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Failed to delete recipe: ${e.toString()}',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.red,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.red),

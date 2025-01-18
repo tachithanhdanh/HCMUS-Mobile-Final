@@ -140,4 +140,60 @@ class RecipeService {
       throw Exception('Failed to fetch most trending recipe: ${e.toString()}');
     }
   }
+
+  Future<String> createRecipe(Recipe recipe) async {
+    try {
+      // Thêm tài liệu mới và lấy DocumentReference
+      DocumentReference docRef =
+          await _firestore.collection('recipes').add(recipe.toMap());
+
+      // Trả về ID của tài liệu mới
+      return docRef.id;
+    } catch (e) {
+      throw Exception('Failed to create recipe: ${e.toString()}');
+    }
+  }
+
+  Future<void> editRecipe(String recipeId, Recipe updatedRecipe) async {
+    try {
+      // Cập nhật thông tin công thức trên Firestore
+      await _firestore
+          .collection('recipes')
+          .doc(recipeId)
+          .update(updatedRecipe.toMap());
+    } catch (e) {
+      throw Exception('Failed to update recipe: ${e.toString()}');
+    }
+  }
+
+  // Xóa công thức
+  Future<void> deleteRecipe(String recipeId) async {
+    try {
+      await _firestore.collection('recipes').doc(recipeId).delete();
+    } catch (e) {
+      throw Exception('Failed to delete recipe: ${e.toString()}');
+    }
+  }
+
+  Future<Recipe?> fetchRandomRecipe() async {
+    try {
+      // Lấy toàn bộ tài liệu từ collection
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('recipes').get();
+      if (querySnapshot.docs.isEmpty) return null;
+
+      // Chọn ngẫu nhiên một tài liệu
+      final randomIndex =
+          (querySnapshot.docs.length * (DateTime.now().millisecond / 1000))
+                  .floor() %
+              querySnapshot.docs.length;
+
+      final DocumentSnapshot randomDoc = querySnapshot.docs[randomIndex];
+      return Recipe.fromMap(
+          randomDoc.data() as Map<String, dynamic>, randomDoc.id);
+    } catch (e) {
+      print("Error fetching random recipe: $e");
+      return null;
+    }
+  }
 }

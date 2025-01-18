@@ -116,12 +116,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                     authorId: recipe.authorId, // ID của tác giả
                     isAuthorCurrentUser:
                         currentUser!.id == recipe.authorId, // So sánh ID
-                    onEditRecipe: () {
-                      // TODO: Chuyển tới trang chỉnh sửa Recipe
-                    },
-                    onAddReview: () {
-                      // TODO: Thêm logic thêm review
-                    },
+                    recipeId: recipe.id, // ID của recipe
                   ),
                   const SizedBox(height: 16),
                   // Phần Details
@@ -243,29 +238,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                     }).toList(),
                   ),
                   const SizedBox(height: 16),
-
-                  // Nút lưu và chia sẻ
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => _saveRecipe('userId', recipe.id),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.redPinkMain,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: Text('Save'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => _shareRecipe(recipe.id),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.redPinkMain,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: Text('Share'),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             );

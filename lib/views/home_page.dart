@@ -19,11 +19,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   UserProfile? currentUser;
   List<String> currentRecipes = [];
-  Recipe? trendingRecipe;
+  // Recipe? trendingRecipe;
   List<Recipe> yourRecipes = [];
   List<Recipe> favoriteRecipes = [];
   List<Recipe> allRecipes = [];
   bool isLoading = true; // Theo dõi trạng thái tải dữ liệu
+  bool hasShownRecipeDialog = false;
 
   final RecipeService _recipeService = RecipeService();
 
@@ -31,6 +32,68 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     initAsync();
+    _showRandomRecipeOnLogin();
+  }
+
+  void _showRandomRecipeOnLogin() async {
+    if (hasShownRecipeDialog) return; // Không hiển thị lại nếu đã hiện
+    currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    if (currentUser == null) {
+      setState(() {
+        isLoading = false; // Ngừng tải nếu không có user
+      });
+      return;
+    }
+
+    Recipe? randomRecipe = await _recipeService.fetchRandomRecipe();
+    if (randomRecipe != null) {
+      _showRecipeDialog(randomRecipe);
+      hasShownRecipeDialog = true; // Đánh dấu dialog đã hiện
+    }
+
+    setState(() {
+      isLoading = false; // Dữ liệu đã tải xong
+    });
+  }
+
+  void _showRecipeDialog(Recipe recipe) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+            onTap: () {
+          // Navigate to the Recipe Details Page
+          Navigator.pushNamed(
+            context,
+            '/recipe_details',
+            arguments: recipe.id, // Pass the recipe ID as an argument
+          );
+        },
+        child: AlertDialog(
+          title: Text(recipe.title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(recipe.imageUrl),
+              const SizedBox(height: 10),
+              Text("Description: ${recipe.description}"),
+              const SizedBox(height: 10),
+              Text("Cook Time: ${recipe.cookTime}"),
+              const SizedBox(height: 10),
+              Text("Difficulty: ${recipe.difficulty.name}"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Close"),
+            ),
+          ],
+        ));
+      },
+    );
   }
 
   Future<void> initAsync() async {
@@ -56,7 +119,7 @@ class _HomePageState extends State<HomePage> {
 
     try {
       // Lấy danh sách công thức thịnh hành
-      final trending = await _recipeService.fetchMostTrendingRecipe();
+      // final trending = await _recipeService.fetchMostTrendingRecipe();
 
       final _allRecipes = await _recipeService.fetchAllRecipes();
 
@@ -72,7 +135,7 @@ class _HomePageState extends State<HomePage> {
       }).toList();
 
       setState(() {
-        trendingRecipe = trending;
+        // trendingRecipe = trending;
         yourRecipes = userRecipes;
         favoriteRecipes = favorites;
         allRecipes = _allRecipes;
@@ -178,49 +241,49 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // Trending Recipe Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Tiêu đề
-                      Text(
-                        "Trending Recipe",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.redPinkMain,
-                        ),
-                      ),
-                      // Dòng chữ "View More" với biểu tượng
-                      GestureDetector(
-                        onTap: () async {
-                          Navigator.of(context).pushNamed('/trending');
-                          // Gọi lại _loadData khi quay về HomePage
-                          await _loadData();
-                        },
-                        child: Row(
-                          children: [
-                            Text(
-                              "View More",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColors.redPinkMain,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(
-                                width: 4), // Khoảng cách giữa chữ và biểu tượng
-                            Icon(
-                              Icons.arrow_forward, // Biểu tượng mũi tên
-                              size: 16,
-                              color: AppColors.redPinkMain,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTrendingRecipes(trendingRecipe!),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     // Tiêu đề
+                  //     Text(
+                  //       "Trending Recipe",
+                  //       style: TextStyle(
+                  //         fontSize: 20,
+                  //         fontWeight: FontWeight.bold,
+                  //         color: AppColors.redPinkMain,
+                  //       ),
+                  //     ),
+                  //     // Dòng chữ "View More" với biểu tượng
+                  //     GestureDetector(
+                  //       onTap: () async {
+                  //         Navigator.of(context).pushNamed('/trending');
+                  //         // Gọi lại _loadData khi quay về HomePage
+                  //         await _loadData();
+                  //       },
+                  //       child: Row(
+                  //         children: [
+                  //           Text(
+                  //             "View More",
+                  //             style: TextStyle(
+                  //               fontSize: 14,
+                  //               color: AppColors.redPinkMain,
+                  //               fontWeight: FontWeight.bold,
+                  //             ),
+                  //           ),
+                  //           const SizedBox(
+                  //               width: 4), // Khoảng cách giữa chữ và biểu tượng
+                  //           Icon(
+                  //             Icons.arrow_forward, // Biểu tượng mũi tên
+                  //             size: 16,
+                  //             color: AppColors.redPinkMain,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 16),
+                  // _buildTrendingRecipes(trendingRecipe!),
                   const SizedBox(height: 32),
                 ],
               ),

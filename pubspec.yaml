@@ -42,6 +42,8 @@ dependencies:
   flutter_dotenv: ^5.2.1
 
   provider: ^6.1.2 # Đây là phiên bản mới nhất tại thời điểm này
+  image_picker: ^1.1.2
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +70,16 @@ flutter:
   assets:
     - assets/images/pochita.jpg
     - assets/images/gojo_satoru.png
+    - assets/images/Breakfast.jpg
+    - assets/images/Lunch.jpg
+    - assets/images/Dinner.jpg
+    - assets/images/Dessert.jpg
+    - assets/images/MainCourse.jpg
+    - assets/images/Appetizer.jpg
+    - assets/images/Beverage.jpg
+    - assets/images/Snack.jpg
+    - assets/images/Other.jpg
+    - assets/images/Soup.jpg
     - assets/.env
     - .env
 
