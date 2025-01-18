@@ -2,6 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../constants/colors.dart';
+import 'dart:convert';
+import 'package:recipe_app/models/recipe.dart';
+import 'package:recipe_app/enums/category.dart';
+import 'package:recipe_app/services/recipe_service.dart';
 
 class AddRecipePage extends StatefulWidget {
   @override
@@ -13,8 +17,30 @@ class _AddRecipePageState extends State<AddRecipePage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _instructionsController = TextEditingController();
+  String? selectedCategory;
+  String? selectedDifficulty;
   final List<Map<String, String>> _ingredients = [];
+
+  final List<String> categories = [
+    'Dessert', // Món tráng miệng
+    'MainCourse', // Món chính
+    'Appetizer', // Khai vị
+    'Beverage', // Đồ uống
+    'Snack', // Đồ ăn nhẹ
+    'Other', // Danh mục khác
+    'Breakfast',
+    'Soup',
+  ];
+
+  final List<String> difficulties = [
+    'Easy',
+    'Medium',
+    'Hard',
+    'Very Hard',
+  ];
+
   File? _selectedImage; // Lưu ảnh được chọn
+  String imageUrl = ''; // Lưu URL ảnh
 
   // Hàm thêm nguyên liệu
   void _addIngredient() {
@@ -39,6 +65,11 @@ class _AddRecipePageState extends State<AddRecipePage> {
       setState(() {
         _selectedImage = File(pickedFile.path); // Lưu file ảnh đã chọn
       });
+
+      // Chuyển ảnh thành Base64
+      final bytes = await _selectedImage!.readAsBytes(); // Đọc dữ liệu byte
+      final base64Image = base64Encode(bytes); // Mã hóa Base64
+      imageUrl = 'data:image/jpeg;base64,$base64Image';
     }
   }
 
@@ -213,6 +244,101 @@ class _AddRecipePageState extends State<AddRecipePage> {
               ),
               const SizedBox(height: 16),
 
+              // Category và Difficulty
+              Row(
+                children: [
+                  // Dropdown cho Category
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Category',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: selectedCategory,
+                          items: categories
+                              .map(
+                                (category) => DropdownMenuItem(
+                                  value: category,
+                                  child: Text(category),
+                                ),
+                              )
+                              .toList(),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: AppColors.redPinkMain.withOpacity(0.1),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 16),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCategory = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16), // Khoảng cách giữa hai trường
+
+                  // Dropdown cho Difficulty
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Difficulty',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: selectedDifficulty,
+                          items: difficulties
+                              .map(
+                                (difficulty) => DropdownMenuItem(
+                                  value: difficulty,
+                                  child: Text(difficulty),
+                                ),
+                              )
+                              .toList(),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: AppColors.redPinkMain.withOpacity(0.1),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 16),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedDifficulty = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               // Ingredients
               Text(
                 'Ingredients',
@@ -326,8 +452,67 @@ class _AddRecipePageState extends State<AddRecipePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      // TODO: Publish logic
+                    onPressed: () async {
+                      if (_titleController.text.isEmpty ||
+                          _descriptionController.text.isEmpty ||
+                          _timeController.text.isEmpty ||
+                          _instructionsController.text.isEmpty ||
+                          _ingredients.isEmpty ||
+                          _selectedImage == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Please fill out all fields and add an image.')),
+                        );
+                        return;
+                      }
+
+                      try {
+                        // Tạo đối tượng Recipe mới
+                        final recipe = Recipe(
+                            id: '', // Firebase sẽ tự cấp phát ID
+                            title: _titleController.text,
+                            description: _descriptionController.text,
+                            imageUrl: imageUrl,
+                            cookTime: _timeController.text,
+                            category: Category.values.firstWhere((e) =>
+                                e.toString().split('.').last ==
+                                (selectedCategory ??
+                                    'Other')), // Mặc định là Other
+                            authorId:
+                                'user123', // Thay bằng ID người dùng hiện tại
+                            reviews: [],
+                            ingredients: _ingredients
+                                .map((ingredient) =>
+                                    '${ingredient['quantity']} ${ingredient['name']}')
+                                .toList(), // Chuyển đổi nguyên liệu sang chuỗi
+                            steps: _instructionsController.text.split(
+                                '\n'), // Chia các bước nấu ăn bằng dấu xuống dòng
+                            createdAt: DateTime.now(),
+                            difficulty: Difficulty.values.firstWhere((e) =>
+                                e.toString().split('.').last ==
+                                (selectedDifficulty ?? 'Easy')));
+
+                        // TODO: Upload ảnh lên Firestore Storage và lấy URL (bổ sung nếu cần)
+
+                        // Gọi hàm tạo Recipe từ service
+                        String newRecipeId =
+                            await RecipeService().createRecipe(recipe);
+
+                        // Navigate đến Recipe Detail Page với ID mới
+                        Navigator.pushNamed(
+                          context,
+                          '/recipe_details',
+                          arguments: newRecipeId,
+                        );
+                      } catch (e) {
+                        // Hiển thị thông báo lỗi
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Failed to create recipe: ${e.toString()}')),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.redPinkMain,

@@ -15,6 +15,7 @@ import 'views/login_signup_page.dart';
 import 'views/search_page.dart';
 import 'views/settings_page.dart';
 import 'views/trending_page.dart';
+import 'views/recipe_reviews.dart';
 import 'constants/colors.dart'; // Import AppColors
 import 'widgets/bottom_nav_bar.dart'; // Import CustomBottomNavBar
 
@@ -69,6 +70,8 @@ class MyApp extends StatelessWidget {
             PageWithNavBar(child: NotificationsPage()),
         '/recipe_details': (context) =>
             PageWithNavBar(child: RecipeDetailsPage()),
+        '/recipe_reviews': (context) =>
+            PageWithNavBar(child: RecipeReviewsPage()),
       },
     );
   }
