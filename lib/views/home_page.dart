@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   List<Recipe> favoriteRecipes = [];
   List<Recipe> allRecipes = [];
   bool isLoading = true; // Theo dõi trạng thái tải dữ liệu
+  bool hasShownRecipeDialog = false;
 
   final RecipeService _recipeService = RecipeService();
 
@@ -31,6 +32,59 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     initAsync();
+    _showRandomRecipeOnLogin();
+  }
+
+  void _showRandomRecipeOnLogin() async {
+    if (hasShownRecipeDialog) return; // Không hiển thị lại nếu đã hiện
+    currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    if (currentUser == null) {
+      setState(() {
+        isLoading = false; // Ngừng tải nếu không có user
+      });
+      return;
+    }
+
+    Recipe? randomRecipe = await _recipeService.fetchRandomRecipe();
+    if (randomRecipe != null) {
+      _showRecipeDialog(randomRecipe);
+      hasShownRecipeDialog = true; // Đánh dấu dialog đã hiện
+    }
+
+    setState(() {
+      isLoading = false; // Dữ liệu đã tải xong
+    });
+  }
+
+  void _showRecipeDialog(Recipe recipe) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(recipe.title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(recipe.imageUrl),
+              const SizedBox(height: 10),
+              Text("Description: ${recipe.description}"),
+              const SizedBox(height: 10),
+              Text("Cook Time: ${recipe.cookTime}"),
+              const SizedBox(height: 10),
+              Text("Difficulty: ${recipe.difficulty.name}"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> initAsync() async {
