@@ -61,7 +61,16 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return GestureDetector(
+            onTap: () {
+          // Navigate to the Recipe Details Page
+          Navigator.pushNamed(
+            context,
+            '/recipe_details',
+            arguments: recipe.id, // Pass the recipe ID as an argument
+          );
+        },
+        child: AlertDialog(
           title: Text(recipe.title),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -82,7 +91,7 @@ class _HomePageState extends State<HomePage> {
               child: const Text("Close"),
             ),
           ],
-        );
+        ));
       },
     );
   }
