@@ -10,7 +10,7 @@ class CategoriesRecipeCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback onFavoriteToggle;
 
-  CategoriesRecipeCard({
+  const CategoriesRecipeCard({super.key,
     required this.recipe,
     required this.author,
     required this.isFavorite,
@@ -19,7 +19,16 @@ class CategoriesRecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GestureDetector(
+        onTap: () {
+      // Navigate to the Recipe Details Page
+      Navigator.pushNamed(
+        context,
+        '/recipe_details',
+        arguments: recipe.id, // Pass the recipe ID as an argument
+      );
+    },
+    child: Card(
       color: AppColors.redPinkMain, // Đặt màu nền tại đây
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -135,25 +144,7 @@ class CategoriesRecipeCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  String _timeAgo(DateTime dateTime) {
-    final Duration difference = DateTime.now().difference(dateTime);
-
-    if (difference.inDays > 365) {
-      return "${(difference.inDays / 365).floor()} years ago";
-    } else if (difference.inDays > 30) {
-      return "${(difference.inDays / 30).floor()} months ago";
-    } else if (difference.inDays > 0) {
-      return "${difference.inDays} days ago";
-    } else if (difference.inHours > 0) {
-      return "${difference.inHours} hours ago";
-    } else if (difference.inMinutes > 0) {
-      return "${difference.inMinutes} minutes ago";
-    } else {
-      return "just now";
-    }
+    ));
   }
 
   double getAverageRating() {
