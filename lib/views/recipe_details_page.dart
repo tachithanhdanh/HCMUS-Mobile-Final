@@ -120,7 +120,12 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                       // TODO: Chuyển tới trang chỉnh sửa Recipe
                     },
                     onAddReview: () {
-                      // TODO: Thêm logic thêm review
+                      // Chuyển hướng đến trang chi tiết công thức
+                      Navigator.pushNamed(
+                        context,
+                        '/recipe_reviews',
+                        arguments: _recipeId,
+                      );
                     },
                   ),
                   const SizedBox(height: 16),

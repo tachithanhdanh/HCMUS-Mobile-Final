@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/constants/colors.dart';
 import 'package:recipe_app/models/recipe.dart';
+import 'dart:convert';
 
 class RecipeDetailCard extends StatelessWidget {
   final Recipe recipe;
@@ -26,7 +27,12 @@ class RecipeDetailCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to recipe details page
+        // Chuyển hướng đến trang chi tiết công thức
+        Navigator.pushNamed(
+          context,
+          '/recipe_reviews',
+          arguments: recipe.id,
+        );
       },
       child: Card(
         color: AppColors.redPinkMain, // Màu nền đỏ
@@ -41,19 +47,30 @@ class RecipeDetailCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
               child: recipe.imageUrl.isNotEmpty
-                  ? Image.network(
-                      recipe.imageUrl,
-                      fit: BoxFit.cover,
-                      height: 150,
-                      width: double.infinity,
-                    )
+                  ? (recipe.imageUrl.startsWith(
+                          'data:image/') // Kiểm tra nếu là chuỗi Base64
+                      ? Image.memory(
+                          base64Decode(
+                            recipe.imageUrl.split(',').last, // Giải mã Base64
+                          ),
+                          fit: BoxFit.cover,
+                          height: 150,
+                          width: double.infinity,
+                        )
+                      : Image.network(
+                          recipe.imageUrl, // URL hình ảnh thông thường
+                          fit: BoxFit.cover,
+                          height: 150,
+                          width: double.infinity,
+                        ))
                   : Image.asset(
-                      'assets/images/pochita.jpg',
+                      'assets/images/pochita.jpg', // Hình mặc định
                       fit: BoxFit.cover,
                       height: 150,
                       width: double.infinity,
                     ),
             ),
+
             // Nội dung dưới hình ảnh
             Padding(
               padding: const EdgeInsets.all(8.0),

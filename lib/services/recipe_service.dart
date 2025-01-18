@@ -140,4 +140,17 @@ class RecipeService {
       throw Exception('Failed to fetch most trending recipe: ${e.toString()}');
     }
   }
+
+  Future<String> createRecipe(Recipe recipe) async {
+    try {
+      // Thêm tài liệu mới và lấy DocumentReference
+      DocumentReference docRef =
+          await _firestore.collection('recipes').add(recipe.toMap());
+
+      // Trả về ID của tài liệu mới
+      return docRef.id;
+    } catch (e) {
+      throw Exception('Failed to create recipe: ${e.toString()}');
+    }
+  }
 }
