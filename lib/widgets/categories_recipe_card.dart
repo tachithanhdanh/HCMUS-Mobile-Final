@@ -52,14 +52,17 @@ class CategoriesRecipeCard extends StatelessWidget {
                   top: 8.0,
                   right: 8.0,
                   child: GestureDetector(
-                    onTap: onFavoriteToggle, // Toggle favorite state
+                    // onTap: onFavoriteToggle, // Toggle favorite state
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
                       padding: EdgeInsets.all(6.0),
-                      child: FavoriteButton(recipeId: recipe.id),
+                      child: FavoriteButton(
+                          recipeId: recipe.id,
+                          onRecipeUpdated: onFavoriteToggle
+                      ),
                     ),
                   ),
                 ),
