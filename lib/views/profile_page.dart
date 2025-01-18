@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_app/constants/colors.dart';
@@ -156,11 +158,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             const SizedBox(height: 16),
             Center(
               child: CircleAvatar(
-                backgroundImage: currentUser!.avatarUrl.isNotEmpty
-                    ? NetworkImage(currentUser!.avatarUrl)
-                    : AssetImage('assets/images/default_avatar.png')
-                as ImageProvider,
-                radius: 50,
+                radius: 60,
+                backgroundImage: currentUser!.avatarUrl.startsWith('data:image/') // Kiểm tra Base64
+                    ? MemoryImage(
+                  base64Decode(currentUser!.avatarUrl.split(',').last),
+                )
+                    : AssetImage('assets/images/pochita.jpg') as ImageProvider, // Ảnh mặc định nếu không có Base64
+                backgroundColor: Colors.grey[200], // Màu nền nếu không có ảnh
               ),
             ),
             const SizedBox(height: 16),
