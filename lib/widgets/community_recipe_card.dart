@@ -19,7 +19,16 @@ class CommunityRecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GestureDetector(
+        onTap: () {
+      // Navigate to the Recipe Details Page
+      Navigator.pushNamed(
+        context,
+        '/recipe_details',
+        arguments: recipe.id, // Pass the recipe ID as an argument
+      );
+    },
+    child: Card(
       color: AppColors.redPinkMain, // Đặt màu nền tại đây
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -175,7 +184,7 @@ class CommunityRecipeCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   String _timeAgo(DateTime dateTime) {
