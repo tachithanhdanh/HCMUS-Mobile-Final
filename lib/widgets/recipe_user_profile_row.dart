@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/constants/colors.dart';
 import 'package:recipe_app/models/user_profile.dart';
 import 'package:recipe_app/services/user_service.dart';
+import 'dart:convert';
 
 class RecipeUserProfileRow extends StatefulWidget {
   final String authorId; // ID của author (lấy từ recipe.authorId)
   final bool isAuthorCurrentUser; // true nếu author là user đang đăng nhập
-  final VoidCallback onEditRecipe; // Callback khi nhấn Edit Recipe
-  final VoidCallback onAddReview; // Callback khi nhấn Add Review
+  final String recipeId;
 
   const RecipeUserProfileRow({
     Key? key,
     required this.authorId,
     required this.isAuthorCurrentUser,
-    required this.onEditRecipe,
-    required this.onAddReview,
+    required this.recipeId,
   }) : super(key: key);
 
   @override
@@ -59,27 +58,6 @@ class _UserProfileRowState extends State<RecipeUserProfileRow> {
 
         return Column(
           children: [
-            // Hàng nút "Edit Recipe" hoặc "Add Review"
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: widget.isAuthorCurrentUser
-                    ? widget.onEditRecipe
-                    : widget.onAddReview,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.redPinkMain,
-                  foregroundColor: AppColors.whiteBeige,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  widget.isAuthorCurrentUser ? 'Edit Recipe' : 'Add Review',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
             // Dòng thông tin người dùng
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,12 +65,16 @@ class _UserProfileRowState extends State<RecipeUserProfileRow> {
                 // Avatar và thông tin người dùng
                 Row(
                   children: [
-                    // Avatar
                     CircleAvatar(
                       radius: 25,
-                      backgroundImage: avatarUrl.isNotEmpty
-                          ? NetworkImage(avatarUrl) as ImageProvider
-                          : AssetImage('assets/images/gojo_satoru.png'),
+                      backgroundImage: avatarUrl
+                              .startsWith('data:image/') // Kiểm tra Base64
+                          ? MemoryImage(
+                              base64Decode(
+                                  avatarUrl.split(',').last), // Giải mã Base64
+                            )
+                          : AssetImage('assets/images/gojo_satoru.png')
+                              as ImageProvider, // Sử dụng ảnh mặc định nếu không phải Base64
                     ),
                     const SizedBox(width: 12),
                     // Username và name
@@ -123,17 +105,18 @@ class _UserProfileRowState extends State<RecipeUserProfileRow> {
                 if (widget.isAuthorCurrentUser)
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/profile');
+                      Navigator.pushNamed(context, '/edit_recipe',
+                          arguments: widget.recipeId);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
+                      backgroundColor: AppColors.redPinkMain,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                     child: Text(
-                      'Edit Profile',
+                      'Edit Recipe',
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
