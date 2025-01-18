@@ -68,16 +68,16 @@ flutter:
   assets:
     - assets/images/pochita.jpg
     - assets/images/gojo_satoru.png
-    - assets/images/Breakfast.jpg,
-    - assets/images/Lunch.jpg,
-    - assets/images/Dinner.jpg,
-    - assets/images/Dessert.jpg,
-    - assets/images/MainCourse.jpg,
-    - assets/images/Appetizer.jpg,
-    - assets/images/Beverage.jpg,
-    - assets/images/Snack.jpg,
-    - assets/images/Other.jpg,
-    - assets/images/Soup.jpg,
+    - assets/images/Breakfast.jpg
+    - assets/images/Lunch.jpg
+    - assets/images/Dinner.jpg
+    - assets/images/Dessert.jpg
+    - assets/images/MainCourse.jpg
+    - assets/images/Appetizer.jpg
+    - assets/images/Beverage.jpg
+    - assets/images/Snack.jpg
+    - assets/images/Other.jpg
+    - assets/images/Soup.jpg
     - assets/.env
     - .env
 
