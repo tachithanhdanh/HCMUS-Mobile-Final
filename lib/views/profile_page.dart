@@ -5,10 +5,10 @@ import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/user_profile.dart';
 import 'package:recipe_app/providers/user_provider.dart';
 import 'package:recipe_app/services/recipe_service.dart';
+import 'package:recipe_app/services/user_service.dart';
 import 'package:recipe_app/widgets/categories_recipe_card.dart';
 import 'package:recipe_app/widgets/profile_icon_actions.dart';
 
-import '../services/user_service.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -21,6 +21,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   List<Recipe> favoriteRecipes = [];
   List<Recipe> userAuthoredRecipes = [];
   List<UserProfile> authors = [];
+  UserProfile? currentUser;
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   Future<void> _loadRecipes() async {
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final currentUser = userProvider.currentUser;
+      currentUser = userProvider.currentUser;
 
       if (currentUser != null) {
         final fetchedRecipes = await RecipeService().fetchAllRecipes();
@@ -48,10 +49,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         setState(() {
           allRecipes = fetchedRecipes;
           favoriteRecipes = fetchedRecipes
-              .where((recipe) => currentUser.favoriteRecipes.contains(recipe.id))
+              .where((recipe) => currentUser!.favoriteRecipes.contains(recipe.id))
               .toList();
           userAuthoredRecipes =
-              fetchedRecipes.where((recipe) => recipe.authorId == currentUser.id).toList();
+              fetchedRecipes.where((recipe) => recipe.authorId == currentUser!.id).toList();
           authors = fetchedAuthors;
         });
       }
@@ -60,10 +61,28 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     }
   }
 
+  Future<void> _toggleFavoriteA(String recipeId) async {
+    if (currentUser == null) return;
+
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    currentUser = userProvider.currentUser;
+    try {
+      setState(() {
+        favoriteRecipes = allRecipes
+            .where((recipe) => currentUser!.favoriteRecipes.contains(recipe.id))
+            .toList();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to toggle favorite: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final currentUser = userProvider.currentUser;
+    currentUser = userProvider.currentUser;
 
     if (currentUser == null) {
       return Scaffold(
@@ -137,8 +156,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             const SizedBox(height: 16),
             Center(
               child: CircleAvatar(
-                backgroundImage: currentUser.avatarUrl.isNotEmpty
-                    ? NetworkImage(currentUser.avatarUrl)
+                backgroundImage: currentUser!.avatarUrl.isNotEmpty
+                    ? NetworkImage(currentUser!.avatarUrl)
                     : AssetImage('assets/images/default_avatar.png')
                 as ImageProvider,
                 radius: 50,
@@ -147,14 +166,14 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             const SizedBox(height: 16),
             Center(
               child: Text(
-                currentUser.name,
+                currentUser!.name,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 8),
             Center(
               child: Text(
-                currentUser.email,
+                currentUser!.email,
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ),
@@ -193,15 +212,18 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       final recipe = userAuthoredRecipes[index];
                       final author = authors.firstWhere(
                             (user) => user.id == recipe.authorId,
-                        orElse: () => UserProfile(id: '', name: 'Unknown', email: '', avatarUrl: ''),
+                        orElse: () => UserProfile(
+                          id: '',
+                          name: 'Unknown',
+                          email: '',
+                          avatarUrl: '',
+                        ),
                       );
                       return CategoriesRecipeCard(
                         recipe: recipe,
                         author: author,
                         isFavorite: favoriteRecipes.contains(recipe),
-                        onFavoriteToggle: () => {
-                          // Handle favorite toggle logic here
-                        },
+                        onFavoriteToggle: () => _toggleFavoriteA(recipe.id),
                       );
                     },
                   ),
@@ -214,6 +236,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     ),
                   )
                       : GridView.builder(
+                    key: ValueKey(favoriteRecipes.length),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
                       crossAxisSpacing: 16.0,
@@ -225,15 +248,18 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       final recipe = favoriteRecipes[index];
                       final author = authors.firstWhere(
                             (user) => user.id == recipe.authorId,
-                        orElse: () => UserProfile(id: '', name: 'Unknown', email: '', avatarUrl: ''),
+                        orElse: () => UserProfile(
+                          id: '',
+                          name: 'Unknown',
+                          email: '',
+                          avatarUrl: '',
+                        ),
                       );
                       return CategoriesRecipeCard(
                         recipe: recipe,
                         author: author,
                         isFavorite: true,
-                        onFavoriteToggle: () => {
-                          // Handle favorite toggle logic here
-                        },
+                        onFavoriteToggle: () => _toggleFavoriteA(recipe.id),
                       );
                     },
                   ),
