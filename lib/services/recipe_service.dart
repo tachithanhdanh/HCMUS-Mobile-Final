@@ -153,4 +153,26 @@ class RecipeService {
       throw Exception('Failed to create recipe: ${e.toString()}');
     }
   }
+
+  Future<Recipe?> fetchRandomRecipe() async {
+    try {
+      // Lấy toàn bộ tài liệu từ collection
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('recipes').get();
+      if (querySnapshot.docs.isEmpty) return null;
+
+      // Chọn ngẫu nhiên một tài liệu
+      final randomIndex =
+          (querySnapshot.docs.length * (DateTime.now().millisecond / 1000))
+                  .floor() %
+              querySnapshot.docs.length;
+
+      final DocumentSnapshot randomDoc = querySnapshot.docs[randomIndex];
+      return Recipe.fromMap(
+          randomDoc.data() as Map<String, dynamic>, randomDoc.id);
+    } catch (e) {
+      print("Error fetching random recipe: $e");
+      return null;
+    }
+  }
 }
