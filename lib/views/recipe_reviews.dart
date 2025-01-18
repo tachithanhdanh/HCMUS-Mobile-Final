@@ -244,7 +244,11 @@ class _RecipeReviewsPageState extends State<RecipeReviewsPage> {
                                 // Nút Add Review
                                 ElevatedButton(
                                   onPressed: () {
-                                    // TODO: Add review logic
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/leave_a_review',
+                                      arguments: recipeData.id,
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,

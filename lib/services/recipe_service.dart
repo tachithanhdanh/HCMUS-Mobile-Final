@@ -154,6 +154,27 @@ class RecipeService {
     }
   }
 
+  Future<void> editRecipe(String recipeId, Recipe updatedRecipe) async {
+    try {
+      // Cập nhật thông tin công thức trên Firestore
+      await _firestore
+          .collection('recipes')
+          .doc(recipeId)
+          .update(updatedRecipe.toMap());
+    } catch (e) {
+      throw Exception('Failed to update recipe: ${e.toString()}');
+    }
+  }
+
+  // Xóa công thức
+  Future<void> deleteRecipe(String recipeId) async {
+    try {
+      await _firestore.collection('recipes').doc(recipeId).delete();
+    } catch (e) {
+      throw Exception('Failed to delete recipe: ${e.toString()}');
+    }
+  }
+
   Future<Recipe?> fetchRandomRecipe() async {
     try {
       // Lấy toàn bộ tài liệu từ collection
