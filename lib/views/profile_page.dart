@@ -1,125 +1,247 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:recipe_app/constants/colors.dart';
+import 'package:recipe_app/models/recipe.dart';
 import 'package:recipe_app/models/user_profile.dart';
-import '../viewmodels/profile_viewmodel.dart';
+import 'package:recipe_app/providers/user_provider.dart';
+import 'package:recipe_app/services/recipe_service.dart';
+import 'package:recipe_app/widgets/categories_recipe_card.dart';
+import 'package:recipe_app/widgets/profile_icon_actions.dart';
+
+import '../services/user_service.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final ProfileViewModel _viewModel = ProfileViewModel();
-  late Future<UserProfile> _userProfile;
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  List<Recipe> allRecipes = [];
+  List<Recipe> favoriteRecipes = [];
+  List<Recipe> userAuthoredRecipes = [];
+  List<UserProfile> authors = [];
 
   @override
   void initState() {
     super.initState();
-    // Giả định userId được lấy từ đâu đó, tạm thời hardcode
-    _userProfile = _viewModel.getUserProfile('currentUserId');
+    _tabController = TabController(length: 2, vsync: this);
+    _loadRecipes();
   }
 
-  void _editProfile() {
-    // Điều hướng đến màn hình Edit Profile
-    Navigator.pushNamed(context, '/edit_profile');
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
-  void _navigateToSettings() {
-    Navigator.pushNamed(context, '/settings');
+  Future<void> _loadRecipes() async {
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final currentUser = userProvider.currentUser;
+
+      if (currentUser != null) {
+        final fetchedRecipes = await RecipeService().fetchAllRecipes();
+        final userIds = fetchedRecipes.map((recipe) => recipe.authorId).toSet().toList();
+        final fetchedAuthors = await UserService().fetchAuthorsByUserIds(userIds);
+
+        setState(() {
+          allRecipes = fetchedRecipes;
+          favoriteRecipes = fetchedRecipes
+              .where((recipe) => currentUser.favoriteRecipes.contains(recipe.id))
+              .toList();
+          userAuthoredRecipes =
+              fetchedRecipes.where((recipe) => recipe.authorId == currentUser.id).toList();
+          authors = fetchedAuthors;
+        });
+      }
+    } catch (e) {
+      // Handle errors if needed
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Profile')),
-      body: FutureBuilder<UserProfile>(
-        future: _userProfile,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error loading profile: ${snapshot.error}'),
-            );
-          } else if (snapshot.hasData) {
-            final user = snapshot.data!;
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    final userProvider = Provider.of<UserProvider>(context);
+    final currentUser = userProvider.currentUser;
+
+    if (currentUser == null) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Center(
-                    child: CircleAvatar(
-                      backgroundImage: user.avatarUrl.isNotEmpty
-                          ? NetworkImage(user.avatarUrl)
-                          : AssetImage('assets/images/gojo_satoru.png')
-                              as ImageProvider,
-                      radius: 50,
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: AppColors.redPinkMain),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  Text(
+                    "Profile",
+                    style: TextStyle(
+                      color: AppColors.redPinkMain,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      user.name,
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
+                  ProfileIconActions()
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'No user information available. Please log in.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-                  const SizedBox(height: 8),
-                  Center(
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: AppColors.redPinkMain),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                Text(
+                  "Profile",
+                  style: TextStyle(
+                    color: AppColors.redPinkMain,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ProfileIconActions()
+              ],
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: CircleAvatar(
+                backgroundImage: currentUser.avatarUrl.isNotEmpty
+                    ? NetworkImage(currentUser.avatarUrl)
+                    : AssetImage('assets/images/default_avatar.png')
+                as ImageProvider,
+                radius: 50,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                currentUser.name,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                currentUser.email,
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TabBar(
+              controller: _tabController,
+              labelColor: AppColors.redPinkMain,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: AppColors.redPinkMain,
+              tabs: [
+                Tab(text: "Recipes"),
+                Tab(text: "Favorites"),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // Recipes Tab
+                  userAuthoredRecipes.isEmpty
+                      ? Center(
                     child: Text(
-                      user.email,
+                      'No recipes authored by you.',
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _editProfile,
-                        child: Text('Edit Profile'),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: _navigateToSettings,
-                        child: Text('Settings'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        Text(
-                          'Favorite Recipes',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        if (user.favoriteRecipes.isEmpty)
-                          Center(
-                            child: Text(
-                              'No favorite recipes found.',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          )
-                        else
-                          ...user.favoriteRecipes.map((recipeId) {
-                            return ListTile(
-                              title: Text(recipeId),
-                              leading: Icon(Icons.favorite, color: Colors.red),
-                            );
-                          }).toList(),
-                      ],
+                  )
+                      : GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                      crossAxisSpacing: 16.0,
+                      mainAxisSpacing: 16.0,
+                      childAspectRatio: 0.55,
                     ),
+                    itemCount: userAuthoredRecipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = userAuthoredRecipes[index];
+                      final author = authors.firstWhere(
+                            (user) => user.id == recipe.authorId,
+                        orElse: () => UserProfile(id: '', name: 'Unknown', email: '', avatarUrl: ''),
+                      );
+                      return CategoriesRecipeCard(
+                        recipe: recipe,
+                        author: author,
+                        isFavorite: favoriteRecipes.contains(recipe),
+                        onFavoriteToggle: () => {
+                          // Handle favorite toggle logic here
+                        },
+                      );
+                    },
+                  ),
+                  // Favorites Tab
+                  favoriteRecipes.isEmpty
+                      ? Center(
+                    child: Text(
+                      'No favorite recipes found.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  )
+                      : GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                      crossAxisSpacing: 16.0,
+                      mainAxisSpacing: 16.0,
+                      childAspectRatio: 0.55,
+                    ),
+                    itemCount: favoriteRecipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = favoriteRecipes[index];
+                      final author = authors.firstWhere(
+                            (user) => user.id == recipe.authorId,
+                        orElse: () => UserProfile(id: '', name: 'Unknown', email: '', avatarUrl: ''),
+                      );
+                      return CategoriesRecipeCard(
+                        recipe: recipe,
+                        author: author,
+                        isFavorite: true,
+                        onFavoriteToggle: () => {
+                          // Handle favorite toggle logic here
+                        },
+                      );
+                    },
                   ),
                 ],
               ),
-            );
-          } else {
-            return Center(child: Text('No data available.'));
-          }
-        },
+            ),
+          ],
+        ),
       ),
     );
   }
